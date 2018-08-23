@@ -1,0 +1,34 @@
+global:
+  resolve_timeout: 5m
+  smtp_smarthost: 'smtp.qiye.163.com:25'
+  smtp_auth_identity: 'monitor@XXXX.com'
+  smtp_auth_username: 'monitor@XXXX.com'
+  smtp_auth_password: 'XXXXXXXXX'
+  smtp_require_tls: false 
+  smtp_from: 'monitor@XXXXX.com'
+
+templates:
+  - 'default.tmpl'
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'monitor.email'
+
+receivers:
+  - name: 'web.hook'
+    webhook_configs:
+    - url: 'http://127.0.0.1:5001/'
+
+  - name: 'monitor.email'
+    email_configs:
+     - to: 'monitor@XXXX.com'
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'dev', 'instance']

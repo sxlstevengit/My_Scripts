@@ -1,0 +1,29 @@
+groups:
+- name: example
+  rules:
+  - alert: ExampleAlert 
+    expr: avg_over_time(process_resident_memory_bytes[5m]) > 40000000
+    for: 1m
+    labels:
+      severity: page
+    annotations:
+      summary: this is a test alert
+
+  - alert: ScheduleLoadCount
+    expr: avg_over_time(schedule_load_count[5m]) < 10
+    for: 5m
+    labels:
+      serverity: page
+    annotations:
+      summary: schedule load count too few
+
+  - alert: ScheduleLoadDecrese
+    expr: abs(delta(schedule_load_count[1d])) > 1000
+    for: 1m
+    labels:
+      serverity: page
+    annotations:
+      summary: schedule  load decrease
+
+
+    

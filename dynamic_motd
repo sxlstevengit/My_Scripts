@@ -1,0 +1,80 @@
+nstallation:
+#
+# 1. vi /etc/profile
+# /usr/local/bin/dynamic_motd # Place at the bottom
+#
+# 2. copy this script into
+# /usr/local/bin/dynamic_motd
+#
+# 3. chmod +x /usr/local/bin/dynamic_motd
+#
+# THANKS TO:
+# https://gist.github.com/cha55son/6042560
+# https://silvinux.wordpress.com/2015/01/04/dynamic-motd-centosredhat/
+#
+ 
+USER=`whoami`
+HOSTNAME=`uname -n`
+IP=`hostname -I`
+ 
+# disk usage on /
+ROOT=`df -Ph / | awk '/\// {print "used:",$3,"/",$2," ( free:",$4,")"}'`
+ROOT_USAGE=`df -h / | awk '/\// {print $5}'|grep -v "^$"`
+ 
+# get memory details and percentage used
+MEMORY=`free -mh | grep "Mem" | awk '{print "used:",$4,"/",$2,"( free: ",$3,")"}'`
+MEM_USAGE=`free -m | grep "Mem" | awk '{printf("%3.1f%%", (($3/$2)*100))}'`
+ 
+# get swap file details
+SWAP=`free -mh | grep "Swap" | awk '{print "used:",$4,"/",$2,"( free: ",$3,")"}'`
+ 
+# get processes
+PSA=`ps -Afl | wc -l`
+ 
+# time of day
+HOUR=$(date +"%H")
+if [ $HOUR -lt 12 -a $HOUR -ge 0 ]
+then TIME="morning"
+elif [ $HOUR -lt 17 -a $HOUR -ge 12 ]
+then TIME="afternoon"
+else
+TIME="evening"
+fi
+ 
+# system uptime
+uptime=`cat /proc/uptime | cut -f1 -d.`
+upDays=$((uptime/60/60/24))
+upHours=$((uptime/60/60%24))
+upMins=$((uptime/60%60))
+upSecs=$((uptime%60))
+ 
+# system load (1/5/15 minutes)
+LOAD1=`cat /proc/loadavg | awk {'print $1'}`
+LOAD5=`cat /proc/loadavg | awk {'print $2'}`
+LOAD15=`cat /proc/loadavg | awk {'print $3'}`
+ 
+COLOR_COLUMN="\e[1m-"
+COL_WHITE="\e[39m"
+COL_RED="\e[31m"
+COL_GREEN="\e[32m"
+COL_YELLOW="\e[33m"
+RESET_COLORS="\e[0m"
+ 
+echo -e "
+=============================== SYSTEM ====================================
+$COLOR_COLUMN- Current usr$RESET_COLORS \t\t: $COL_WHITE $USER $RESET_COLORS
+$COLOR_COLUMN- Hostname$RESET_COLORS \t\t: $COL_YELLOW $HOSTNAME $RESET_COLORS
+$COLOR_COLUMN- IP Address$RESET_COLORS \t\t: $COL_YELLOW $IP $RESET_COLORS
+$COLOR_COLUMN- Release$RESET_COLORS \t\t: $COL_GREEN `cat /etc/redhat-release` $RESET_COLORS
+$COLOR_COLUMN- System uptime$RESET_COLORS \t: $COL_WHITE $upDays days, $upHours hours, $upMins minutes, $upSecs seconds $RESET_COLORS
+$COLOR_COLUMN- Users$RESET_COLORS \t\t: $COL_WHITE Currently `users | wc -w` user(s) logged on $RESET_COLORS
+============================== SYSINFO ====================================$RESET_COLORS
+$COLOR_COLUMN- CPU usage$RESET_COLORS \t\t: $COL_WHITE $LOAD1 - $LOAD5 - $LOAD15 (1-5-15 min) $RESET_COLORS
+$COLOR_COLUMN- Memory usage$RESET_COLORS \t: $COL_WHITE $MEM_USAGE $RESET_COLORS
+$COLOR_COLUMN- Memory$RESET_COLORS \t\t: $COL_WHITE $MEMORY $RESET_COLORS
+$COLOR_COLUMN- Swap in use$RESET_COLORS \t\t: $COL_WHITE $SWAP $RESET_COLORS
+$COLOR_COLUMN- Processes$RESET_COLORS \t\t: $COL_WHITE $PSA running $RESET_COLORS
+$COLOR_COLUMN- Disk space /$RESET_COLORS \t: $COL_WHITE $ROOT $RESET_COLORS
+$COLOR_COLUMN- Disk usage /$RESET_COLORS \t: $COL_WHITE $ROOT_USAGE $RESET_COLORS
+===========================================================================
+"

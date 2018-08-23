@@ -1,0 +1,24 @@
+[Unit]
+Description=alertmanager
+Documentation=https://prometheus.io/docs/alerting/alertmanager/
+#Wants=network-online.target
+#After=network-online.target
+
+[Service]
+#User=alertmanager  # 必须用该用户和相应的执行权限否则不能启动
+#Group=alertmanager
+User=root
+Group=root
+#simple 和forking的区别：[simple] ExecStart字段启动的进程为主进程
+#[forking] ExecStart字段将以fork()方式启动，此时父进程将会退出，子进程将成为主进程
+#Type=simple
+Type=forking
+ExecStart=/root/src/prometheus/alertmanager/start_alertmanager.sh
+ExecReload=/usr/bin/kill -9 $MAINPID
+Restart=on-failure
+KillMode=process
+RestartSec=5s
+
+
+[Install]
+WantedBy=multi-user.target graphical.target

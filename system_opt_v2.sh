@@ -223,7 +223,7 @@ sync_time(){
   cron_count=`grep -w "ntpdate" "$CRON"|wc -l`
   if [[ $cron_count -lt 1 ]];then
      echo '#time sync by steven in 2017-11-03 17:48:45'>$CRON 
-     echo "ntpdate $NTP_SERVER >/dev/null 2>&1" >>$CRON
+     echo "0 1 * * * /usr/sbin/ntpdate $NTP_SERVER >/dev/null 2>&1" >>$CRON
      crontab -l
   else
      echo "you have set ntp sync"

@@ -1,0 +1,45 @@
+# Description: 
+#!/bin/bash
+# chkconfig: 2345 31 61                       # 设置chkconfig 级别
+# description: start or stop rsync daemon     # 描述  
+
+. /etc/init.d/functions
+pidfile=/var/run/rsyncd.pid
+RETVAL=0
+start_rsync(){
+if [ -f $pidfile ];then                       # 判断pid文件，存在就不再启动
+    echo "Rsync is already running"
+else
+    /usr/local/bin/rsync --daemon --config=/etc/rsyncd/rsyncd.conf
+    action "Rsync starts successfully "  /bin/true
+fi 
+}
+stop_rsync(){
+if [ -f $pidfile ];then
+    kill -USR2 `cat $pidfile`
+    rm -rf $pidfile                            # 停止服务，就删除pid文件
+    action "Rsync stops successfully" /bin/true
+else 
+    action "Rsync is already stopped.Stop Failed" /bin/false    
+fi
+}
+case "$1" in 
+    start)
+        start_rsync
+        RETVAL=$?
+        ;;
+    stop)
+        stop_rsync
+        RETVAL=$?
+        ;;
+    restart)
+        stop_rsync
+        sleep 2
+        start_rsync
+        RETVAL=$?
+        ;;
+    *)
+        echo "Usage:$0 start|stop|restart"
+        exit 1      
+esac
+exit $RETVAL

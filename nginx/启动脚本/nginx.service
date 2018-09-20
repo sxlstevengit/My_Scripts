@@ -1,0 +1,26 @@
+[Unit]
+Description=Nginx
+Documentation=http://nginx.org
+After=network.target remote-fs.target nss-lookup.target
+#Wants=network-online.target
+#After=network-online.target
+
+[Service]
+#simple 和forking的区别：[simple] ExecStart字段启动的进程为主进程
+#[forking] ExecStart字段将以fork()方式启动，此时父进程将会退出，子进程将成为主进程
+Type=forking
+PIDFile=/usr/local/nginx/logs/nginx.pid
+ExecStartPre=/usr/bin/rm -f $PIDFile
+ExecStartPre=/usr/local/nginx/sbin/nginx -t -c /usr/local/nginx/conf/nginx.conf
+ExecStart=/usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf
+ExecReload=/usr/bin/kill -s HUP $MAINPID
+Restart=on-failure
+KillMode=process
+RestartSec=5s
+KillSignal=SIGQUIT
+TimeoutStopSec=5
+PrivateTmp=true
+#PrivateTmp=true表示给服务分配独立的临时空间
+
+[Install]
+WantedBy=multi-user.target graphical.target

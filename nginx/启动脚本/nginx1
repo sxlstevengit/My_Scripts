@@ -1,0 +1,77 @@
+#!/bin/bash
+# chkconfig: - 85 15
+# description: nginx Startup script for the Nginx HTTP Server
+# processname: nginx
+# pidfile: /usr/local/nginx/logs/nginx.pid
+# config: /usr/local/nginx/conf/nginx.conf
+
+
+nginxd=/usr/local/nginx/sbin/nginx
+nginx_config=/usr/local/nginx/conf/nginx.conf
+nginx_pid=/usr/local/nginx/logs/nginx.pid
+RETVAL=0
+prog=nginx
+
+# Source function library.
+#source /etc/init.d/functions
+# Source networking configuration.
+#. /etc/sysconfig/network
+# Check that networking is up.
+#[ ${NETWORKING} = "no" ] && exit 0
+[ -x $nginxd ] || exit 0
+
+# Start nginx daemons functions.
+
+start() {
+if [ -e $nginx_pid ];then
+   echo "nginx already running...."
+   exit 1
+fi
+   echo "Starting $prog ... "
+   $nginxd -c ${nginx_config}
+   RETVAL=$?
+   echo
+   [ $RETVAL = 0 ] && touch /var/lock/subsys/nginx
+   return $RETVAL
+}
+
+
+# Stop nginx daemons functions.
+stop() {
+        echo -n "Stopping $prog:"
+        kill -INT `cat $nginx_pid`
+        RETVAL=$?
+        echo
+        [ $RETVAL = 0 ] && rm -f /var/lock/subsys/nginx $nginx_pid
+}
+
+# reload nginx service functions.
+reload() {
+    echo -n $"Reloading $prog: "
+    #kill -HUP `cat ${nginx_pid}`
+    kill -HUP $nginxd
+    RETVAL=$?
+    echo
+}
+
+
+# See how we were called.
+case "$1" in
+start)
+        start
+        ;;
+stop)
+        stop
+        ;;
+reload)
+        reload
+        ;;
+restart)
+        stop
+        start
+        ;;
+*)
+        echo $"Usage: $prog {start|stop|restart|reload|help}"
+        exit 1
+esac
+exit $RETVAL

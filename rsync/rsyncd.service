@@ -1,0 +1,17 @@
+[Unit]
+Description=fast remote file copy program daemon
+ConditionPathExists=/etc/rsyncd.conf
+
+[Service]
+Type=forking
+#环境文件可配置环境变量，可以在当前文件中引用
+EnvironmentFile=/etc/rsyncd/EnvironmentFile
+#ConFile=/etc/rsyncd/rsyncd.conf
+PIDFile=/var/run/rsyncd.pid
+ExecStart=/usr/local/bin/rsync --daemon /etc/rsyncd.conf
+ExecStop=/usr/bin/kill -USR2 $MAINPID
+ExecStopPost=/usr/bin/rm -f $PIDFile
+
+
+[Install]
+WantedBy=multi-user.target graphical.target

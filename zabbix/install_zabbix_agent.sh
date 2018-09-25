@@ -76,4 +76,12 @@ lsof -i:10050 >/dev/null 2>&1
 [[ $? -eq 0 ]] && echo "Zabbix_agentd install seccess" ||  echo "Zabbix_agentd install failure"
 }
 
+# setup scripts for agent
+install_zabbix_scripts(){
+wget or git pull 
+mkdir -p /usr/local/zabbix/scripts
+chmod +x *.py *.sh
+mv *.py *.sh /usr/local/zabbix/scripts/
+}
+
 install_zabbix_agent

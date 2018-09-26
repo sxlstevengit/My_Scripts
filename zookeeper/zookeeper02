@@ -1,0 +1,16 @@
+#!/bin/bash
+# chkconfig: 2345 10 90
+# description: service zookeeper
+export JAVA_HOME=/opt/java/jdk1.8.0_121
+export ZOO_LOG_DIR=/opt/zookeeper/log
+ZOOKEEPER_HOME=/opt/zookeeper/zookeeper-3.4.10
+case "$1" in
+    start)${ZOOKEEPER_HOME}/bin/zkServer.sh start;;
+    start-foreground)${ZOOKEEPER_HOME}/bin/zkServer.sh start-foreground;;
+    stop)${ZOOKEEPER_HOME}/bin/zkServer.sh stop;;
+    status)${ZOOKEEPER_HOME}/bin/zkServer.sh status;;
+    restart)${ZOOKEEPER_HOME}/bin/zkServer.sh restart;;
+    upgrade)${ZOOKEEPER_HOME}/bin/zkServer.sh upgrade;;
+    print-cmd)${ZOOKEEPER_HOME}/bin/zkServer.sh print-cmd;;
+    *) echo  "requirestart|start-foreground|stop|status|restart|print-cmd";;
+esac

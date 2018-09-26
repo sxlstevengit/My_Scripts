@@ -1,0 +1,7 @@
+#!/bin/bash
+# chkconfig:   2345 10 90
+# description:  zookeeper 
+export JAVA_HOME=/usr/local/java/jdk1.8.0_92
+export ZOO_LOG_DIR=/data/logs/zookeeper
+ZOOKEEPER_HOME=/usr/local/zookeeper
+${ZOOKEEPER_HOME}/bin/zkServer.sh "$1"

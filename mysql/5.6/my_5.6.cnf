@@ -1,0 +1,106 @@
+[client]
+port        = 3306 
+socket        =/tmp/mysql.sock
+default-character-set= utf8
+[mysqld]
+# generic configuration options
+bind-address = 0.0.0.0
+port        = 3306 
+socket        = /tmp/mysql.sock
+datadir     = /data/mysql
+tmpdir      = /data/mysql_tmpdir
+lower_case_table_names = 0
+#*** char set ***
+character-set-server = utf8 #设置服务器端的字符编码
+#*** network ***
+back_log = 512
+skip-name-resolve
+#skip-networking #默认没有开启
+max_connections = 5000
+max_connect_errors = 6000
+table_open_cache = 4096
+#external-locking #默认没有开启
+skip-external-locking
+max_allowed_packet = 32M
+max_heap_table_size = 128M
+# *** global cache ***
+read_buffer_size = 16M
+read_rnd_buffer_size = 64M
+sort_buffer_size = 32M
+join_buffer_size = 128M
+# *** thread ***
+thread_cache_size = 16
+thread_concurrency = 8
+thread_stack = 512K
+# *** query  cache ***
+query_cache_size = 128M
+query_cache_limit = 4M
+# *** index ***
+ft_min_word_len = 8
+#memlock #默认没有开启
+default-storage-engine = INNODB
+transaction_isolation = REPEATABLE-READ
+# *** tmp table ***
+tmp_table_size = 64M
+# *** bin log ***
+log-bin=mysql-bin
+binlog_cache_size = 4M
+binlog_format = 'ROW'
+expire_logs_days = 90
+#log_slave_updates #默认没有开启
+#log #默认没有开启，此处是查询日志，开启会影响服务器性能
+log_warnings #开启警告日志
+# *** slow query log ***
+slow_query_log = 1
+long_query_time = 2
+# ***  Replication related settings
+server-id= 1
+#server-id = 2
+#master-host = <hostname> 
+#master-user = <username> 
+#master-password = <password> 
+#master-port = <port>
+#read_only
+#*** MyISAM Specific options
+key_buffer_size = 128M
+bulk_insert_buffer_size = 256M
+myisam_sort_buffer_size = 256M
+myisam_max_sort_file_size = 10G
+myisam_repair_threads = 1
+myisam_recover
+# *** INNODB Specific options ***
+#skip-innodb #默认没有开启
+innodb_additional_mem_pool_size = 64M
+innodb_file_per_table = 1
+innodb_buffer_pool_size = 1G#设置为物理内存的四分之一.
+innodb_data_file_path = ibdata1:10M:autoextend
+#innodb_data_home_dir = <directory>
+innodb_write_io_threads = 8
+innodb_read_io_threads = 8
+#innodb_force_recovery=1
+innodb_thread_concurrency = 16
+innodb_flush_log_at_trx_commit = 2
+#说明：innodb_flush_log_at_trx_commit = 1 如果是游戏服务器，建议此值设置为2；如果是对数据安全要求极高的应用，建议设置为1；设置为0性能最高，但如果发生故障，数据可能会有丢失的危险！默认值1的意思是每一次事务提交或事务外的指令都需要把日志写入（flush）硬盘，这是很费时的。特别是使用电池供电缓存（Battery backed up cache）时。设成2对于很多运用，特别是从MyISAM表转过来的是可以的，它的意思是不写入硬盘而是写入系统缓存。日志仍然会每秒flush到硬盘，所以你一般不会丢失超过1-2秒的更新。设成0会更快一点，但安全方面比较差，即使MySQL挂了也可能会丢失事务的数据。而值2只会在整个操作系统挂了时才可能丢数据。
+#innodb_fast_shutdown
+innodb_log_buffer_size = 16M
+innodb_log_file_size = 512M
+innodb_log_files_in_group = 3
+#innodb_log_group_home_dir
+innodb_max_dirty_pages_pct = 90
+#innodb_flush_method=O_DSYNC
+innodb_lock_wait_timeout = 120
+innodb_rollback_on_timeout = 1
+[mysqldump] 
+quick
+max_allowed_packet = 32M
+[mysql]
+no-auto-rehash
+[myisamchk]
+key_buffer_size = 2048M 
+sort_buffer_size = 2048M 
+read_buffer = 32M 
+write_buffer = 32M
+[mysqlhotcopy]
+interactive-timeout
+[mysqld_safe]
+open-files-limit = 102400

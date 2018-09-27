@@ -1,0 +1,70 @@
+#!/bin/bash
+# chkconfig:   2345 20 80
+# description:  mesos agent
+MESOS_AGENT_HOME=/usr/local/mesos
+PORT=5051
+Result=0
+
+#[[ -f /etc/init.d/functions ]] && . /etc/init.d/functions
+
+
+
+start(){
+/usr/sbin/lsof -i:$PORT >dev/null 2>&1
+[[ $? -eq 0 ]] && echo "Mesos agent is running" || {
+echo "Mesos agent will start..."
+${MESOS_AGENT_HOME}/sbin/mesos-start-agents.sh
+Result=$?
+echo "Mesos agent has started"
+return $Result
+}
+}
+
+
+stop(){
+/usr/sbin/lsof -i:$PORT >dev/null 2>&1
+[[ $? -ne 0 ]] && echo "Mesos agent is not running" || {
+echo "Mesos agent will stop..."
+${MESOS_AGENT_HOME}/sbin/mesos-stop-agents.sh
+Result=$?
+echo "Mesos agent has stopped"
+return $Result
+}
+}
+
+status(){
+/usr/sbin/lsof -i:$PORT >dev/null 2>&1
+
+if [[ $? -eq 0 ]];then 
+   echo "Mesos agent is running" 
+else 
+   echo "Mesos agent is down"
+fi
+}
+
+restart(){
+  stop
+  sleep 3
+  start
+}
+
+
+
+
+
+case "$1" in
+  start)
+  $1
+  ;;
+  stop)
+  $1
+  ;;
+  restart)
+  $1
+  ;;
+  status)
+  $1
+  ;;
+  *)
+  echo  "$0 {start|stop|restart|status}"
+esac

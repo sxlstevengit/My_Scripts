@@ -1,0 +1,70 @@
+#!/bin/bash
+# chkconfig:   2345 20 80
+# description:  mesos master
+MESOS_MASTER_HOME=/usr/local/mesos
+PORT=5050
+Result=0
+
+#[[ -f /etc/init.d/functions ]] && . /etc/init.d/functions
+
+
+
+start(){
+/usr/sbin/lsof -i:$PORT >dev/null 2>&1
+[[ $? -eq 0 ]] && echo "Mesos master is running" || {
+echo "Mesos master will start..."
+${MESOS_MASTER_HOME}/sbin/mesos-start-masters.sh
+Result=$?
+echo "Mesos master has started"
+return $Result
+}
+}
+
+
+stop(){
+/usr/sbin/lsof -i:$PORT >dev/null 2>&1
+[[ $? -ne 0 ]] && echo "Mesos master is not running" || {
+echo "Mesos master will stop..."
+${MESOS_MASTER_HOME}/sbin/mesos-stop-masters.sh
+Result=$?
+echo "Mesos master has stopped"
+return $Result
+}
+}
+
+status(){
+/usr/sbin/lsof -i:$PORT >dev/null 2>&1
+
+if [[ $? -eq 0 ]];then 
+   echo "Mesos master is running" 
+else 
+   echo "Mesos master is down"
+fi
+}
+
+restart(){
+  stop
+  sleep 3
+  start
+}
+
+
+
+
+
+case "$1" in
+  start)
+  $1
+  ;;
+  stop)
+  $1
+  ;;
+  restart)
+  $1
+  ;;
+  status)
+  $1
+  ;;
+  *)
+  echo  "$0 {start|stop|restart|status}"
+esac

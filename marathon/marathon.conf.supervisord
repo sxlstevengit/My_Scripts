@@ -1,0 +1,22 @@
+[supervisorctl]
+serverurl=http://localhost:9001
+
+[supervisord]
+loglevel=debug
+
+[inet_http_server]
+port=*:9001
+username=admin
+password=supervisor
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[program:marathon]
+command = /usr/local/marathon/bin/start --master zk://10.30.0.6:2181/mesos --zk zk://10.30.0.6:2181/marathon --event_subscriber http_callback
+autostart=true
+autorestart=true
+redirect_stderr=true
+stdout_logfile=/data/logs/marathon/marathon.log
+stdout_logfile_maxbytes=20MB
+stdout_logfile_backups=20 

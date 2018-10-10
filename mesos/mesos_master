@@ -1,6 +1,7 @@
 #!/bin/bash
 # chkconfig:   2345 20 80
 # description:  mesos master
+# 需要安装 yum install -y lsof
 MESOS_MASTER_HOME=/usr/local/mesos
 PORT=5050
 Result=0

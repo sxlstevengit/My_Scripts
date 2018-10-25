@@ -1,0 +1,24 @@
+#!bin/bash 
+# chkconfig: 2345 80 20 
+# description: Jetty 9 webserver 
+# processname: jetty 
+JETTY_HOME=/usr/local/jetty/bin
+
+case $1 in
+start)
+  $JETTY_HOME/jetty.sh start
+  ;;
+stop)
+  $JETTY_HOME/jetty.sh stop
+  ;; 
+status)
+  $JETTY_HOME/jetty.sh status
+  ;; 
+restart)
+  $JETTY_HOME/jetty.sh restart
+  ;; 
+*)
+  echo "require start|stop|status|restart" 
+  ;; 
+esac 
+

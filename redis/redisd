@@ -8,7 +8,7 @@ EXEC=/usr/local/redis/src/redis-server
 CLIEXEC=/usr/local/redis/src/redis-cli
 
 PIDFILE=/var/run/redis_${REDISPORT}.pid
-CONF="//usr/local/redis/redis.conf"
+CONF="/usr/local/redis/redis.conf"
 
 case "$1" in
     start)

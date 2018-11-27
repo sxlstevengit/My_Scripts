@@ -1,0 +1,12 @@
+[Unit]
+Description=Marathon server
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/marathon/bin/start --master zk://master01.xxx.so:2181,master02.xxx.so:2181,master03.xxx.so:2181/mesos --zk zk://master01.xxx.so:2181,master02.xxx.so:2181,master03.xxx.so:2181/marathon
+ExecStop=/bin/killall marathon
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -35,10 +35,14 @@ SELINUX_F=/etc/selinux/config
 set_env(){
  [[ -f $ENV_FILE ]] && {
  cat >> $ENV_FILE << EOF
-* soft nproc 65536
-* hard nproc 65536
-* soft nofile 65536
-* hard nofile 65536
+* soft core 0
+* hard core 0
+* soft nofile 1048576
+* hard nofile 1048576
+* soft nproc 1048576
+* hard nproc 1048576
+* soft stack unlimited
+* hard stack unlimited
 EOF
 echo "set $ENV_FILE success"
 }                                                                                                                         
@@ -242,8 +246,11 @@ export TMOUT=300
 readonly TMOUT
 export HISTSIZE=5000
 export HISTFILESIZE=10000
+export HISTTIMEFORMAT='%F %T '
+ulimit -SHn 1024000
 EOF
      . $ENV_PROFILE
+echo "set command line success"
   fi
 }
 
@@ -330,6 +337,10 @@ NET_DIR=/etc/sysconfig/network-scripts
 #NET_DIR=/root/A
 
 Set_Ip(){
+ [[ $# -eq 0 ]] && {
+   echo "Please provider the IPaddress"
+   exit 4
+ }
  temp=$1
  net_name=`ifconfig | awk -F: 'NR==1{print $1}'`
  net_file=${NET_DIR}/ifcfg-${net_name}
@@ -382,4 +393,8 @@ sync_time
 
 #RongYi ry-test-pc 192.168.100.200
 
-install_tool
+#install_tool
+
+set_env
+set_com_line
+

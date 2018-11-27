@@ -1,0 +1,13 @@
+[Unit]
+Description=mesos agent server
+After=network.target remote-fs.target nss-lookup.target docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+EnvironmentFile=/usr/local/mesos/etc/mesos/mesos-agent-env
+ExecStart=/usr/local/mesos/sbin/mesos-agent
+ExecStop=/bin/killall mesos-agent
+
+[Install]
+WantedBy=multi-user.target

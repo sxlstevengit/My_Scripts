@@ -1,0 +1,10 @@
+- name: copy file
+  hosts: slave
+  tasks:
+    - name: copy shell scripts
+      copy:
+         src: /root/src/install_mesos_marathon.sh
+         dest: /root/src/
+         owner: root
+         group: root
+         mode: 0755

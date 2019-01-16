@@ -17,7 +17,7 @@ Install_Php7() {
   
 cd $APP_DIR
   echo "start install dependencies package for php7"
-  yum install --setopt=protected_multilib=false libxml2 libxml2-devel openssl openssl-devel libssl-devel curl libcurl4-gnutls-devel libjpeg-devel libpng12-devel libfreetype6 libfreetype6-devel libmcrypt4 libmcrypt-devel php-mcrypt libmcrypt libmcrypt-devel gd build-essential autoconf bzip2 bzip2-devel openldap openldap-devel aspell aspell-devel readline readline-devel libxslt libxslt-devel pcre pcre-devel freetype freetype-devel gmp-devel curl-devel libpng-devel
+  yum install --setopt=protected_multilib=false libxml2 libxml2-devel openssl openssl-devel libssl-devel curl libcurl4-gnutls-devel libjpeg-devel libpng12-devel libfreetype6 libfreetype6-devel libmcrypt4 libmcrypt-devel php-mcrypt libmcrypt libmcrypt-devel gd build-essential autoconf bzip2 bzip2-devel openldap openldap-devel aspell aspell-devel readline readline-devel libxslt libxslt-devel pcre pcre-devel freetype freetype-devel gmp-devel curl-devel libpng-devel -y
   
   [[ $? -eq 0 ]] && echo "start install php7" || {
      ret_val=$?
@@ -55,5 +55,5 @@ netstat -lntp | grep 9000
 chkconfig php-fpm on
 
 }
-nstall_Epel
+Install_Epel
 Install_Php7

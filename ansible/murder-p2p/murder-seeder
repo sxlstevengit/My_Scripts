@@ -1,0 +1,106 @@
+#! /bin/sh
+#
+# Start/Stop murder-seeder
+#
+# chkconfig: 345 99 99
+# description: murder-seeder
+# processname: murder-seeder
+
+if [ -f /etc/rc.d/init.d/functions ]; then
+    . /etc/rc.d/init.d/functions
+fi
+
+
+
+
+name="murder-seeder"
+murder_seeder_data="/opt/data/murder"
+murder_seeder_log="/opt/logs/murder/murder_seeder.log"
+murder_seeder_bin="/opt/app/murder/dist/murder_client.py"
+murder_make_torrent_bin="/opt/app/murder/dist/murder_make_torrent.py"
+murder_seeder_conf="/opt/app/murder/dist/seeder.conf"
+deploy_file=$(awk -F= '/deploy_file/{print $2}' /opt/app/murder/dist/seeder.conf)
+torrent_file=$(awk -F= '/torrent_file/{print $2}' /opt/app/murder/dist/seeder.conf)
+tracker_ip=$(awk -F= '/tracker_ip/{print $2}' /opt/app/murder/dist/seeder.conf)
+local_ip=$(awk -F= '/local_ip/{print $2}' /opt/app/murder/dist/seeder.conf)
+murder_user=murder
+
+
+find_seeder_process () {
+    PID=`ps -ef | grep murder_client|grep seed | grep python |grep -v $0|grep -v grep| awk '{ print $2 }'`
+    #PID=`ps -ef | grep murder_client|grep seed | grep python |grep -v $0|grep -v grep|grep -v sh|grep -v root| awk '{ print $2 }'`
+}
+
+start () {
+    getent passwd $murder_user  >/dev/null || useradd -r  -s /sbin/nologin $murder_user
+    LOG_DIR=`dirname ${murder_seeder_log}`
+    DATA_DIR=${murder_seeder_data}
+    if [ ! -d $LOG_DIR ]; then
+      echo -e  "\e[35mLog dir ${LOG_DIR} doesn't exist. Creating\e[0m"
+      mkdir -p $LOG_DIR     
+    fi
+    if [ ! -d $DATA_DIR ]; then
+      echo -e  "\e[35mLog dir ${DATA_DIR} doesn't exist. Creating\e[0m"
+      mkdir -p $DATA_DIR
+    fi
+ 
+    ####### make torrent 
+    python $murder_make_torrent_bin $deploy_file $tracker_ip $torrent_file   
+    #######
+    chown -R $murder_user:$murder_user $DATA_DIR  $LOG_DIR
+
+    find_seeder_process
+    if [ "$PID" != "" ]; then
+       echo -e  "\e[35m$name is already running!\e[0m"
+    else
+       nohup python $murder_seeder_bin seed $torrent_file $deploy_file $local_ip > $murder_seeder_log 2>&1 &
+       #daemon --user $murder_user  nohup  python $murder_seeder_bin  seed  $torrent_file $deploy_file $local_ip     > $murder_seeder_log 2>&1 &
+       echo -e "\e[35mStarting $name Done\e[0m"
+    fi
+}
+
+
+
+stop () {
+    find_seeder_process
+    if [ "$PID" != "" ]; then
+        echo -e "\e[35mStopping $name\e[0m"
+        kill $PID
+    else
+        echo -e "\e[35m$name is not running yet\e[0m"
+    fi
+}
+
+case $1 in
+start)
+        start
+        ;;
+stop)
+        stop
+        exit 0
+        ;;
+reload)
+        stop
+        sleep 2
+        start
+        ;;
+restart)
+        stop
+        sleep 2
+        start
+        ;;
+status)
+        find_seeder_process
+        if [ "$PID" != "" ]; then
+          echo -e "\e[35m$name is running: $PID\e[0m"
+          exit 0
+        else
+          echo -e "\e[35m$name is not running\e[0m"
+          exit 1
+        fi
+        ;;
+*)
+        echo -e "\e[35mUsage: $0 {start|stop|restart|reload|status|configtest}\e[0m"
+        RETVAL=1
+esac
+exit 0

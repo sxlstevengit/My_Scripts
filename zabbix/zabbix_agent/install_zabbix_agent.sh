@@ -26,7 +26,7 @@ echo "modify config file"
 [[ -f $ZABBIX_AGENT_CONF ]] || { 
 echo "$ZABBIX_AGENT_CONF can't find"
 exit 1
-
+}
 sed -i 's/^LogFile=.*/LogFile=\/data\/logs\/zabbix\/zabbix_agentd.log/' $ZABBIX_AGENT_CONF
 sed -i 's/^Server=.*/Server=123.207.219.29/' $ZABBIX_AGENT_CONF
 sed -i 's/^ServerActive=.*/ServerActive=123.207.219.29/' $ZABBIX_AGENT_CONF

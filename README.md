@@ -2,8 +2,11 @@
 
 
 关于某个服务会以文件夹命名，目录下包含服务启用脚本，及配置文件相关。
+
 例如：nginx， 启用脚本nginx适合各种Centos版本，nginx.service只适用Centos7
+
 推荐nginx 和 nginx2
+
 
 使用方法：
  

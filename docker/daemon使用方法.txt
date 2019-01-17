@@ -1,0 +1,15 @@
+#下面的etcd.abc.com域名改成自己的域名
+
+"cluster-store": "etcd://etcd.abc.com:2379",
+
+#把ens33改成你服务器的网卡名称
+
+"cluster-advertise": "ens33:2375",
+
+#repo.rongyi.com改成你自己的registries服务器
+
+insecure-registries": ["repo.rongyi.com:5000"]
+
+# 改成自己数据路径
+
+"graph": "/data/docker",

@@ -1,0 +1,10 @@
+groups:
+- name: marathon_unhealthy
+  rules:
+  - alert: 健康检查
+    expr: marathon_app_task_unhealthy > 0
+    for: 3m 
+    labels:
+      severity: warning
+    annotations:
+      summary: "应用模块【{{$labels.app}}】健康检查失败，请检查应用运行状态"

@@ -1,0 +1,10 @@
+groups:
+- name: miniprog_manager_gateway
+  rules:
+  - alert: 授权异常 
+    expr: delta(miniprog_manager_gateway_authorization_failure_total{error_type="system_error"}[2m]) > 1
+    for: 10s
+    labels:
+      severity: warning
+    annotations:
+      summary: "应用服务|miniprog-manager-gateway|，主机|{{$labels.host}}|，2分钟内授权失败次数大于1，请检查失败原因"

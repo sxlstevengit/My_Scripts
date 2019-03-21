@@ -1,0 +1,18 @@
+groups:
+- name: easy_roa
+  rules:
+  - alert: 领取卡券
+    expr: delta(easy_roa_create_coupon_order_count{chargeType="free",result="fail_sys"}[5m]) > 10
+    for: 10s
+    labels:
+      severity: warning
+    annotations:
+      summary: "应用服务|easy-roa|，主机|{{$labels.host}}|，5分钟内领取卡券累计失败次数大于10，请核查失败原因"
+
+  - alert: 购买卡券
+    expr: delta(easy_roa_create_coupon_order_count{chargeType="charge",result="fail_sys"} [5m]) > 10
+    for: 10s
+    labels:
+      severity: warning
+    annotations:
+      summary: "应用服务|easy-roa|，主机|{{$labels.host}}|，5分钟内购买卡券累计失败次数大于10，请核查失败原因"

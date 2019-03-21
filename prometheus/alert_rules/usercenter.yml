@@ -1,0 +1,18 @@
+groups:
+- name: usercenter 
+  rules: 
+  - alert: 查询错误 
+    expr: delta(usercenter_http_requests_gauge{app="usercenter",method="POST",url="v1/user/info",errno="1500500"}[15m]) > 2 
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "应用服务|usercenter|，15分钟内会员接口查询异常超过预期设定的阈值，请检查失败原因"
+
+  - alert: 会员短信
+    expr: delta(usercenter_send_sms_error{app="usercenter",method="POST",url="v1/user/sendsms",errno="1500500"}[5m]) > 1
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "应用服务|usercenter|，5分钟内会员短信发送失败超过预期设定的阈值，请检查失败原因"

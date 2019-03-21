@@ -1,0 +1,18 @@
+groups:
+- name: ry_activity_client
+  rules: 
+  - alert: 短信异常
+    expr: delta(ry_activity_parent_message_failure_total[1m]) > 1 
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "应用服务|ry-activity-client|，主机|{{$labels.host}}|，1分钟内短信异常次数大于1，请检查失败原因"
+
+  - alert: 派奖异常
+    expr: delta(ry_activity_parent_post_process_failure_total[1m]) > 1
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "应用服务|ry-activity-client|，主机|{{$labels.host}}|，1分钟内派奖异常次数大于1，请检查失败原因"

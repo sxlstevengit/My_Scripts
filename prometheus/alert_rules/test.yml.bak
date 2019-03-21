@@ -1,0 +1,10 @@
+groups:
+- name: test_code_center
+  rules:
+  - alert: 查询券码
+    expr: delta(code_center_verify_code_count{result="fail_biz"}[5m]) == 0
+    for: 10s
+    labels:
+      severity: warning
+    annotations:
+      summary: "应用服务｜code-center｜，主机｜{{$labels.host}}｜，5分钟内查询券码详情累计失败次数等于0，请核查失败原因"

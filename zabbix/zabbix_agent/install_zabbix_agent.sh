@@ -28,8 +28,8 @@ echo "$ZABBIX_AGENT_CONF can't find"
 exit 1
 }
 sed -i 's/^LogFile=.*/LogFile=\/data\/logs\/zabbix\/zabbix_agentd.log/' $ZABBIX_AGENT_CONF
-sed -i 's/^Server=.*/Server=123.207.219.29/' $ZABBIX_AGENT_CONF
-sed -i 's/^ServerActive=.*/ServerActive=123.207.219.29/' $ZABBIX_AGENT_CONF
+sed -i 's/^Server=.*/Server=XXX.XXX.XXX.XXX/' $ZABBIX_AGENT_CONF
+sed -i 's/^ServerActive=.*/ServerActive=XXX.XXX.XXX.XXX/' $ZABBIX_AGENT_CONF
 sed -i 's/^Hostname=.*/#&/' $ZABBIX_AGENT_CONF
 sed -i 's/^# \(HostnameItem=.*\)/\1/' $ZABBIX_AGENT_CONF
 cat >> $ZABBIX_AGENT_CONF <<- EOF

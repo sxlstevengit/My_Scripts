@@ -1,0 +1,16 @@
+version: '3.2'
+services:
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alertmanager
+    user: root
+    network_mode: "host"
+    restart: always
+    command:
+      - --storage.path=/alertmanager
+      - --data.retention=120h
+      - --config.file=/etc/alertmanager/alertmanager.yml
+    volumes:
+      - /data/alertmanager:/alertmanager:rw
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - ./default.tmpl:/etc/alertmanager/default.tmpl:ro

@@ -1,0 +1,184 @@
+global:
+# 警报恢复后的超时时间 
+  resolve_timeout: 5m
+
+# 邮件服务告警全局配置如下，请参考
+# 配置邮件服务器
+  smtp_smarthost: 'smtp.qiye.163.com:25'
+  smtp_auth_identity: 'XXXX@XXX.com'
+# 发送邮件邮件的登录用户名
+  smtp_auth_username: 'XXXX@XXX.com'
+# 发送邮件地址的登录密码
+  smtp_auth_password: 'password'
+# 是否需要加密传输数据
+  smtp_require_tls: false 
+# 发送邮件地址
+  smtp_from: 'XXXX@XXX.com'
+  
+# 报警模板文件
+templates:
+  - 'default.tmpl'
+
+# 报警路由规则
+route: #可以定义子规则
+# 报警分组
+  group_by: ['alertname','instance','app','host','app_version']
+# 在发送第一次告警的延时时间
+  group_wait: 10s
+# 发送警报时间间隔
+  group_interval: 10s
+# 重复的警报发送等待时间
+  repeat_interval: 24h 
+# 接收警报通道方试
+  receiver: 'marathon'
+  routes:
+  - receiver: 'code-center'
+    group_by: ['app','host']
+    match:
+      app: easy-roa,code-center
+  - receiver: 'miniprog-manager-gateway'
+    group_by: ['alertname','app','host']
+    match:
+      app: miniprog_manager_gateway
+  - receiver: 'ry-activity-client'
+    group_by: ['alertname','app','host']
+    match:
+      app: ry_activity_client
+  - receiver: 'usercenter'
+    group_by: ['alertname','app','url','host']
+    match:
+      app: usercenter 
+  - receiver: 'wwj'
+    group_by: ['alertname','hostname','mountpoint']
+    match:
+      job: wwj_v8,wwjv4_docker,wwj-v8-marathon 
+  - receiver: 'matchu-mgr'
+    group_by: ['alertname','app','host','appname','api']
+    match:
+      appname: matchu-mgr
+  - receiver: 'mcp-service'
+    group_by: ['alertname','app','host','appname','api']
+    match:
+      appname: mcp-service 
+  - receiver: 'easy-sample-service'
+    group_by: ['alertname','app','host','appname','api']
+    match:
+      appname: easy-sample-service  
+  - receiver: 'sephora-terminal-shopping'
+    group_by: ['alertname','app','host','appname','api']
+    match:
+      appname: sephora-terminal-shopping
+# 接收警报通道的具体配置信息
+receivers:
+  - name: 'web.hook'
+    webhook_configs:
+    - url: 'http://127.0.0.1:5001/'
+
+  - name: 'email'
+    email_configs:
+     - to: 'monitor@xxxx.com'
+ 
+# 微信相关配置 
+  - name: 'wechat'
+    wechat_configs:
+    - send_resolved: true
+      corp_id: 'xxxxxxx'   #在 "我的企业" 最底部可以查看到 "企业ID"
+      to_party: '1'                   #在通讯录可以查看到自建好部门，有一个部门ID号
+      agent_id: '1000002'             #在自建好的应用中查看所得
+      api_secret: 'xxxxxxxxxxxxxxxxxxxxxxxxxxx' #在自建好的应用中查看所得
+      #message: '{{ template "wechat.html" . }}'
+  - name: 'code-center'
+    wechat_configs:
+    - send_resolved: true
+      corp_id: 'XXXXXXXXXXXXXXXXX'
+      to_user: 'GaoHaiFeng|LiangLaiBin|ZhuJun|LiXu|ShiXiaoLiang|WangXiaoLin|LinQinhe'
+      agent_id: '1000005'
+      api_secret: 'xxxxxxxxxxxxxxxxxxxxxxxxxxx'
+      #message: '{{ template "wechat.html" . }}'
+  - name: 'marathon'
+    wechat_configs:
+    - send_resolved: true
+      corp_id: 'XXXXXXXXXXXXXXXXX'
+      to_party: '14'
+      to_user: 'ZhuJun|LinQinhe|ZhengLing|YuZhiJian|LiangLaiBin|WuHui'
+      agent_id: '1000003'
+      api_secret: 'xxxxxxxxxxxxxxxxxxxxxxxxxxx'
+      message: '{{ template "marathon.message" . }}'
+  - name: 'ry-activity-client'
+    wechat_configs:
+    - send_resolved: true
+      corp_id: 'XXXXXXXXXXXXXXXXX'
+      to_party: '14'
+      to_user: 'WuHui'
+      agent_id: '1000006'
+      api_secret: 'xxxxxxxxxxxxxxxxxxxxxxxxxxx'
+      #message: '{{ template "marathon.message" . }}'
+  - name: 'miniprog-manager-gateway'
+    wechat_configs:
+    - send_resolved: true
+      corp_id: 'XXXXXXXXXXXXXXXXX'
+      to_party: '14'
+      to_user: 'WuChaoYue'
+      agent_id: '1000007'
+      api_secret: 'xxxxxxxxxxxxxxxxxxxxxxxxxxx'
+      #message: '{{ template "marathon.message" . }}'
+  - name: 'usercenter'
+    wechat_configs:
+    - send_resolved: true
+      corp_id: 'XXXXXXXXXXXXXXXXX'
+      to_party: '14'
+      to_user: 'ZhangRuiChuan'
+      agent_id: '1000008'
+      api_secret: 'xxxxxxxxxxxxxxxxxxxxxxxxxxx'
+  - name: 'wwj'
+    wechat_configs:
+    - send_resolved: true
+      corp_id: 'XXXXXXXXXXXXXXXXX'
+      to_party: '14'
+      to_user: 'WuChaoYue'
+      agent_id: '1000009'
+      api_secret: 'xxxxxxxxxxxxxxxxxxxxxxxxxxx'
+      message: '{{ template "wwj.message" . }}'
+  - name: 'matchu-mgr'
+    wechat_configs:
+    - send_resolved: true
+      corp_id: 'XXXXXXXXXXXXXXXXX'
+      to_party: '14'
+      to_user: 'ZhengLing|LinQinhe'
+      agent_id: '1000011'
+      api_secret: 'xxxxxxxxxxxxxxxxxxxxxxxxxxx'
+      #message: '{{ template "wechat.html" . }}'
+  - name: 'mcp-service'
+    wechat_configs:
+    - send_resolved: true
+      corp_id: 'XXXXXXXXXXXXXXXXX'
+      to_party: '14'
+      to_user: 'ZhangZhengPing|LinQinhe'
+      agent_id: '1000012'
+      api_secret: 'xxxxxxxxxxxxxxxxxxxxxxxxxxx'
+      #message: '{{ template "wechat.html" . }}'
+  - name: 'easy-sample-service'
+    wechat_configs:
+    - send_resolved: true
+      corp_id: 'XXXXXXXXXXXXXXXXX'
+      to_party: '14'
+      to_user: 'ZhengLing|LinQinhe'
+      agent_id: '1000013'
+      api_secret: 'xxxxxxxxxxxxxxxxxxxxxxxxxxx'
+      #message: '{{ template "wechat.html" . }}'
+  - name: 'sephora-terminal-shopping'
+    wechat_configs:
+    - send_resolved: true
+      corp_id: 'XXXXXXXXXXXXXXXXX'
+      to_party: '14'
+      to_user: 'ZhengLing|LinQinhe'
+      agent_id: '1000014'
+      api_secret: 'xxxxxxxxxxxxxxxxxxxxxxxxxxx'
+      #message: '{{ template "wechat.html" . }}'
+# 抑制策略 
+#inhibit_rules:
+#  - source_match:
+#      severity: 'critical'
+#    target_match:
+#      severity: 'warning'
+#    equal: ['alertname', 'dev', 'instance']

@@ -1,0 +1,321 @@
+groups:
+- name: getMemberInfo
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="getMemberInfo"}[5m]) / increase(histogram_sephora_api_consuming_count{api="getMemberInfo"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|getMemberInfo,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: shopUserLogin
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="shopUserLogin"}[5m]) / increase(histogram_sephora_api_consuming_count{api="shopUserLogin"}[5m]) > 3 
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|shopUserLogin,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: getProducts
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="getProducts"}[5m]) / increase(histogram_sephora_api_consuming_count{api="getProducts"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|getProducts,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: getProductsAndbrand
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="getProductsAndbrand"}[5m]) / increase(histogram_sephora_api_consuming_count{api="getProductsAndbrand"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|getProductsAndbrand,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: getProductDetail
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="getProductDetail"}[5m]) / increase(histogram_sephora_api_consuming_count{api="getProductDetail"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|getProductDetail,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: getProductDesc
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="getProductDesc"}[5m]) / increase(histogram_sephora_api_consuming_count{api="getProductDesc"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|getProductDesc,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: editShopCart
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="editShopCart"}[5m]) / increase(histogram_sephora_api_consuming_count{api="editShopCart"}[5m]) > 3
+    for: 1m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|editShopCart,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: addShopCart
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="addShopCart"}[5m]) / increase(histogram_sephora_api_consuming_count{api="addShopCart"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|addShopCart,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: deleteShopCart
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="deleteShopCart"}[5m]) / increase(histogram_sephora_api_consuming_count{api="deleteShopCart"}[5m]) > 3
+    for: 1m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|deleteShopCart,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: useCoupon
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="useCoupon"}[5m]) / increase(histogram_sephora_api_consuming_count{api="useCoupon"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|useCoupon,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: addAddress
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="addAddress"}[5m]) / increase(histogram_sephora_api_consuming_count{api="addAddress"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|addAddress,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: getProvinces
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="getProvinces"}[5m]) / increase(histogram_sephora_api_consuming_count{api="getProvinces"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|getProvinces,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: getSkuSpec
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="getSkuSpec"}[5m]) / increase(histogram_sephora_api_consuming_count{api="getSkuSpec"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|getSkuSpec,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: getSkuImages
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="getSkuImages"}[5m]) / increase(histogram_sephora_api_consuming_count{api="getSkuImages"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|getSkuImages,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: submitOrder
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="submitOrder"}[5m]) / increase(histogram_sephora_api_consuming_count{api="submitOrder"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|submitOrder,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: getGroupCategory
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="getGroupCategory"}[5m]) / increase(histogram_sephora_api_consuming_count{api="getGroupCategory"}[5m]) > 3 
+    for: 1m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|getGroupCategory,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: getShopInfoOne
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="getShopInfoOne"}[5m]) / increase(histogram_sephora_api_consuming_count{api="getShopInfoOne"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|getShopInfoOne,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: getGoodsNum
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="getGoodsNum"}[5m]) / increase(histogram_sephora_api_consuming_count{api="getGoodsNum"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|getGoodsNum,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: getUserCoupons
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="getUserCoupons"}[5m]) / increase(histogram_sephora_api_consuming_count{api="getUserCoupons"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|getUserCoupons,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: getShopInfoTwo
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="getShopInfoTwo"}[5m]) / increase(histogram_sephora_api_consuming_count{api="getShopInfoTwo"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|getShopInfoTwo,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: getGiftModelList
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="getGiftModelList"}[5m]) / increase(histogram_sephora_api_consuming_count{api="getGiftModelList"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      summary: "应用服务|sephora-terminal-shopping|getGiftModelList,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: getShopCartTwo
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="getShopCartTwo"}[5m]) / increase(histogram_sephora_api_consuming_count{api="getShopCartTwo"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      Rummary: "应用服务|sephora-terminal-shopping|getShopCartTwo,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: cartConfirm
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="cartConfirm"}[5m]) / increase(histogram_sephora_api_consuming_count{api="cartConfirm"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      Rummary: "应用服务|sephora-terminal-shopping|cartConfirm,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: editDeliveryInfo
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="editDeliveryInfo"}[5m]) / increase(histogram_sephora_api_consuming_count{api="editDeliveryInfo"}[5m]) > 3  
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      Rummary: "应用服务|sephora-terminal-shopping|editDeliveryInfo,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: queryAllBrands
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="queryAllBrands"}[5m]) / increase(histogram_sephora_api_consuming_count{api="queryAllBrands"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      Rummary: "应用服务|sephora-terminal-shopping|queryAllBrands,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: getCategoryListByBrand
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="getCategoryListByBrand"}[5m]) / increase(histogram_sephora_api_consuming_count{api="getCategoryListByBrand"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      Rummary: "应用服务|sephora-terminal-shopping|getCategoryListByBrand,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: getBrandListByCategory
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="getBrandListByCategory"}[5m]) / increase(histogram_sephora_api_consuming_count{api="getBrandListByCategory"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      Rummary: "应用服务|sephora-terminal-shopping|getBrandListByCategory,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: getCategoryListByExclusive
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="getCategoryListByExclusive"}[5m]) / increase(histogram_sephora_api_consuming_count{api="getCategoryListByExclusive"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      Rummary: "应用服务|sephora-terminal-shopping|getCategoryListByExclusive,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: getBrandListByGiftset
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="getBrandListByGiftset"}[5m]) / increase(histogram_sephora_api_consuming_count{api="getBrandListByGiftset"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      Rummary: "应用服务|sephora-terminal-shopping|getBrandListByGiftset,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: pay
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="pay"}[5m]) / increase(histogram_sephora_api_consuming_count{api="pay"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      Rummary: "应用服务|sephora-terminal-shopping|pay,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: detail
+  rules:
+  - alert: 丝芙兰第三方接口请求耗时
+    expr: increase(histogram_sephora_api_consuming_sum{api="detail"}[5m]) / increase(histogram_sephora_api_consuming_count{api="detail"}[5m]) > 3
+    for: 2m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      Rummary: "应用服务|sephora-terminal-shopping|detail,丝芙兰第三方接口请求耗时超过阈值-请检查失败原因"
+- name: thirdApiSephora
+  rules:
+  - alert: 丝芙兰第三方接口失败
+    expr: couter_api_error{api="thirdApiSephora"} == 1.0 or delta(couter_api_error{api="thirdApiSephora"}[5m]) != 0
+    for: 1m 
+    labels:
+      severity: warning
+      appname: sephora-terminal-shopping
+    annotations:
+      Rummary: "应用服务|sephora-terminal-shopping,丝芙兰第三方接口失败-请检查失败原因"

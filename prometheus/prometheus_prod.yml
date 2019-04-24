@@ -1,0 +1,124 @@
+# my global config
+global:
+  scrape_interval:     30s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  scrape_timeout: 20s       # is set to the global default (10s).
+  external_labels:
+      monitor: 'codelab-monitor'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - 10.10.0.16:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+   - "alerting_rule/*.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus'
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+    - targets: ['10.10.0.16:9090']
+  - job_name: 'wwj_docker'
+    static_configs:
+    - targets: ['10.40.2.5:8080','10.40.2.15:8080']
+  - job_name: 'wwjv4_docker'
+    static_configs:
+    - targets: ['10.50.3.11:8080']
+  - job_name: 'usercenter'
+    static_configs:
+    - targets: ['uc.int.rongyi.com']
+  - job_name: 'docker_daemon'
+    static_configs:
+    - targets: ['10.10.0.11:1337']
+  - job_name: 'wwj_v8'
+    static_configs:
+    - targets: ['10.40.2.6:9100']
+      labels:
+        hostname: 'wwj-prod-ha-01'
+        ipaddress: '10.40.2.6'
+    - targets: ['10.40.2.16:9100']
+      labels:
+        hostname: 'wwj-prod-ha-02'
+        ipaddress: '10.40.2.16'
+    - targets: ['10.40.2.3:9100']
+      labels:
+        hostname: 'wwj-prod-master-01'
+        ipaddress: '10.40.2.3'
+    - targets: ['10.40.2.7:9100']
+      labels:
+        hostname: 'wwj-prod-master-02'
+        ipaddress: '10.40.2.7'
+    - targets: ['10.40.2.9:9100']
+      labels:
+        hostname: 'wwj-prod-master-03'
+        ipaddress: '10.40.2.9'
+    - targets: ['10.40.2.8:9100']
+      labels:
+        hostname: 'wwj-prod-nginx-01'
+        ipaddress: '10.40.2.8'
+    - targets: ['10.40.2.10:9100']
+      labels:
+        hostname: 'wwj-prod-nginx-02'
+        ipaddress: '10.40.2.10'
+    - targets: ['10.40.2.5:9100']
+      labels:
+        hostname: 'wwj-prod-slave-01'
+        ipaddress: '10.40.2.5'
+    - targets: ['10.40.2.15:9100']
+      labels:
+        hostname: 'wwj-prod-slave-02'
+        ipaddress: '10.40.2.15'
+  
+  - job_name: 'marathon'
+    static_configs:
+    - targets: ['10.20.0.3:9088']
+      labels:
+        status: 'master'
+
+  - job_name: 'wwj-v8-marathon'
+    static_configs:
+    - targets: ['10.40.2.3:9088']
+      labels:
+        status: 'wwj-master'
+    #marathon_sd_configs:
+    #- servers:
+      #- http://10.20.0.3:8080
+ 
+  - job_name: 'wwj_jvm'
+    marathon_sd_configs:
+    - servers:
+      - http://10.40.2.3:8080
+
+  - job_name: 'java-monitor'
+    marathon_sd_configs:
+    - servers:
+      - http://10.20.0.10:8080
+    #relabel_configs:
+    #  -  
+    relabel_configs:
+    - source_labels: [__meta_marathon_app_label_prometheus,__metrics_path__]
+      separator:
+      #regex: (\/.+)
+      target_label: __metrics_path__
+    #metric_relabel_configs:
+    - source_labels: [__meta_marathon_app]
+      regex: (/others/.+)
+      action: drop
+    - source_labels: [__meta_marathon_app_label_prometheus]
+      regex: (none)
+      action: drop
+      #replacement: __meta_marathon_app__metrics_path__
+    #relabel_configs:
+    #  - target_label: __address__
+    #    replacement: 10.20.0.3:8080 

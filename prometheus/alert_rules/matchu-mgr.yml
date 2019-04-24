@@ -1,0 +1,151 @@
+groups:
+- name: sendVerificationCode
+  rules:
+  - alert: 获取短信验证码失败
+    expr: couter_api_error{api="sendVerificationCode"} == 1.0 or delta(couter_api_error{api="sendVerificationCode"}[5m]) != 0
+    for: 1m
+    labels:
+      severity: warning
+      appname: matchu-mgr
+    annotations:
+      summary: "应用服务|matchu-mgr,5分钟内获取短信验证码失败，请检查失败原因"
+- name: registUser
+  rules:
+  - alert: 注册会员失败
+    expr: couter_api_error{api="registUser"} == 1.0 or delta(couter_api_error{api="registUser"}[5m]) != 0
+    for: 1m
+    labels:
+      severity: warning
+      appname: matchu-mgr
+    annotations:
+      summary: "应用服务|matchu-mgr,5分钟内获取注册会员失败，请检查失败原因"
+- name: genUserOpenCode
+  rules:
+  - alert: 获取量体码失败
+    expr: couter_api_error{api="genUserOpenCode"} == 1.0 or delta(couter_api_error{api="genUserOpenCode"}[5m]) != 0
+    for: 1m
+    labels:
+      severity: warning
+      appname: matchu-mgr
+    annotations:
+      summary: "应用服务|matchu-mgr,5分钟内获取量体码失败，请检查失败原因"
+- name: checkoutOpenCode
+  rules:
+  - alert: 量体码使用失败
+    expr: couter_api_error{api="checkoutOpenCode"} == 1.0 or delta(couter_api_error{api="checkoutOpenCode"}[5m]) != 0
+    for: 1m
+    labels:
+      severity: warning
+      appname: matchu-mgr
+    annotations:
+      summary: "应用服务|matchu-mgr,5分钟内量体码使用失败，请检查失败原因"
+- name: saveUserBodyReport
+  rules:
+  - alert: 生成量体报告失败
+    expr: couter_api_error{api="saveUserBodyReport"} == 1.0 or delta(couter_api_error{api="saveUserBodyReport"}[5m]) != 0
+    for: 1m
+    labels:
+      severity: warning
+      appname: matchu-mgr
+    annotations:
+      summary: "应用服务|matchu-mgr,5分钟内生成量体报告失败，请检查失败原因"
+- name: sendUserBodyReport
+  rules:
+  - alert: 发送量体报告失败
+    expr: couter_api_error{api="sendUserBodyReport"} == 1.0 or delta(couter_api_error{api="sendUserBodyReport"}[5m]) != 0
+    for: 1m
+    labels:
+      severity: warning
+      appname: matchu-mgr
+    annotations:
+      summary: "应用服务|matchu-mgr,5分钟内发送量体报告失败-请检查失败原因"
+- name: createOrder
+  rules:
+  - alert: 下单失败
+    expr: couter_api_error{api="createOrder",} == 1.0 or delta(couter_api_error{api="createOrder"}[5m]) != 0
+    for: 1m
+    labels:
+      severity: warning
+      appname: matchu-mgr
+    annotations:
+      summary: "应用服务|matchu-mgr,5分钟内下单失败-请检查失败原因"
+- name: userHeightLow
+  rules:
+  - alert: 量体报告结果身高低于1米5
+    expr:  delta(couter_biz_error{biz="userHeightLow"}[1d]) > 2
+    for: 1m
+    labels:
+      severity: warning
+      appname: matchu-mgr
+    annotations:
+      summary: "应用服务|matchu-mgr,每天内量体报告结果身高低于1米5出现次数超过阈值-请检查失败原因"
+- name: userHeightHigh
+  rules:
+  - alert: 量体报告结果身高超过2米
+    expr: delta(couter_biz_error{biz="userHeightHigh"}[1d]) > 2
+    for: 1m
+    labels:
+      severity: warning
+      appname: matchu-mgr
+    annotations:
+      summary: "应用服务|matchu-mgr,每天内量体报告结果身高超过2米出现次数超过阈值-请检查失败原因"
+- name: thirdApiMatchu
+  rules:
+  - alert: matchu第三方接口失败
+    expr: couter_api_error{api="thirdApiMatchu"} == 1.0 or delta(couter_api_error{api="thirdApiMatchu"}[5m]) != 0
+    for: 1m
+    labels:
+      severity: warning
+      appname: matchu-mgr
+    annotations:
+      summary: "应用服务|matchu-mgr,5分钟内matchu第三方接口失败-请检查失败原因"
+- name: messagesend
+  rules:
+  - alert: matchu短信发送接口请求耗时
+    expr: (histogram_matchu_api_consuming_count{api="/message/send"} == 1 and histogram_matchu_api_consuming_sum{api="/message/send"} > 3) or increase(histogram_matchu_api_consuming_sum{api="/message/send",}[5m]) / increase(histogram_matchu_api_consuming_count{api="/message/send",}[5m]) > 3
+    for: 2m
+    labels:
+      severity: warning
+      appname: matchu-mgr
+    annotations:
+      summary: "应用服务|matchu-mgr,matchu短信发送接口请求耗时超过阈值(3秒)-请检查失败原因"
+- name: usermanagecreate
+  rules:
+  - alert: matchu注册会员接口请求耗时
+    expr: (histogram_matchu_api_consuming_count{api="/usermanage/create"} == 1 and histogram_matchu_api_consuming_sum{api="/usermanage/create"} > 2) or increase(histogram_matchu_api_consuming_sum{api="/usermanage/create",}[5m]) / increase(histogram_matchu_api_consuming_count{api="/usermanage/create",}[5m]) > 2
+    for: 2m
+    labels:
+      severity: warning
+      appname: matchu-mgr
+    annotations:
+      summary: "应用服务|matchu-mgr,matchu注册会员接口请求耗时超过阈值(2秒)-请检查失败原因"
+- name: ordercreate
+  rules:
+  - alert: matchu创建订单接口请求耗时
+    expr: (histogram_matchu_api_consuming_count{api="/order/create"} == 1 and histogram_matchu_api_consuming_sum{api="/order/create"} > 2) or increase(histogram_matchu_api_consuming_sum{api="/order/create",}[5m]) / increase(histogram_matchu_api_consuming_count{api="/order/create",}[5m]) > 2
+    for: 2m
+    labels:
+      severity: warning
+      appname: matchu-mgr
+    annotations:
+      summary: "应用服务|matchu-mgr,matchu创建订单接口请求耗时超过阈值(2秒)-请检查失败原因"
+- name: usermanagefillinfo
+  rules:
+  - alert: matchu更新会员接口请求耗时
+    expr: (histogram_matchu_api_consuming_count{api="/usermanage/fillinfo"} == 1 and histogram_matchu_api_consuming_sum{api="/usermanage/fillinfo"} > 2) or increase(histogram_matchu_api_consuming_sum{api="/usermanage/fillinfo",}[5m]) / increase(histogram_matchu_api_consuming_count{api="/usermanage/fillinfo",}[5m]) > 2
+    for: 2m
+    labels:
+      severity: warning
+      appname: matchu-mgr
+    annotations:
+      summary: "应用服务|matchu-mgr,matchu更新会员接口请求耗时超过阈值(2秒)-请检查失败原因"
+- name: rongyiget-size-info
+  rules:
+  - alert: matchu获取量体报告接口请求耗时
+    expr: (histogram_matchu_api_consuming_count{api="/rongyi/get-size-info"} == 1 and histogram_matchu_api_consuming_sum{api="/rongyi/get-size-info"} > 2) or increase(histogram_matchu_api_consuming_sum{api="/rongyi/get-size-info",}[5m]) / increase(histogram_matchu_api_consuming_count{api="/rongyi/get-size-info",}[5m]) > 2
+    for: 2m
+    labels:
+      severity: warning
+      appname: matchu-mgr
+    annotations:
+      summary: "应用服务|matchu-mgr,matchu获取量体报告接口请求耗时超过阈值(2秒)-请检查失败原因"

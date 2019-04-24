@@ -1,0 +1,151 @@
+groups:
+- name: sendVerificationCode
+  rules:
+  - alert: 获取短信验证码失败
+    expr: couter_api_error{api="sendVerificationCode"} == 1.0 or delta(couter_api_error{api="sendVerificationCode"}[5m]) != 0
+    for: 1m
+    labels:
+      severity: warning
+      appname: easy-sample-service
+    annotations:
+      summary: 应用服务|easy-sample-service,5分钟内获取短信验证码失败，请检查失败原因
+- name: getBaseUserInfo
+  rules:
+  - alert: 获取会员信息失败
+    expr: couter_api_error{api="getBaseUserInfo"} == 1.0 or delta(couter_api_error{api="getBaseUserInfo"}[5m]) != 0
+    for: 1m
+    labels:
+      severity: warning
+      appname: easy-sample-service
+    annotations:
+      summary: 应用服务|easy-sample-service,5分钟内获取会员信息失败，请检查失败原因
+- name: userCanJoin
+  rules:
+  - alert: 用户是否能参加活动判断失败
+    expr: couter_api_error{api="userCanJoin"} == 1.0 or delta(couter_api_error{api="userCanJoin"}[5m]) != 0
+    for: 1m
+    labels:
+      severity: warning
+      appname: easy-sample-service
+    annotations:
+      summary: 应用服务|easy-sample-service,5分钟内用户是否能参加活动判断失败，请检查失败原因
+- name: registUserJoin
+  rules:
+  - alert: 用户注册信息后参加活动失败
+    expr: couter_api_error{api="registUserJoin"} == 1.0 or delta(couter_api_error{api="registUserJoin"}[5m]) != 0
+    for: 1m
+    labels:
+      severity: warning
+      appname: easy-sample-service
+    annotations:
+      summary: 应用服务|easy-sample-service,5分钟内用户注册信息后参加活动失败，请检查失败原因
+- name: userRegist
+  rules:
+  - alert: 注册会员信息失败
+    expr: couter_api_error{api="userRegist"} == 1.0 or delta(couter_api_error{api="userRegist"}[5m]) != 0
+    for: 1m
+    labels:
+      severity: warning
+      appname: easy-sample-service
+    annotations:
+      summary: 应用服务|easy-sample-service,5分钟内注册会员信息失败，请检查失败原因
+- name: integralPayJoin
+  rules:
+  - alert: 积分支付参加活动失败
+    expr: couter_api_error{api="integralPayJoin"} == 1.0 or delta(couter_api_error{api="integralPayJoin"}[5m]) != 0
+    for: 1m
+    labels:
+      severity: warning
+      appname: easy-sample-service
+    annotations:
+      summary: 应用服务|easy-sample-service,5分钟内积分支付参加活动失败，请检查失败原因
+- name: rmbPayJoin
+  rules:
+  - alert: 人民币支付参加活动失败
+    expr: couter_api_error{api="rmbPayJoin"} == 1.0 or delta(couter_api_error{api="rmbPayJoin"}[5m]) != 0
+    for: 1m
+    labels:
+      severity: warning
+      appname: easy-sample-service
+    annotations:
+      summary: 应用服务|easy-sample-service,5分钟内人民币支付参加活动失败，请检查失败原因
+- name: wechatPaySign
+  rules:
+  - alert: 获取微信支付签名信息失败
+    expr: couter_api_error{api="wechatPaySign"} == 1.0 or delta(couter_api_error{api="wechatPaySign"}[5m]) != 0
+    for: 1m
+    labels:
+      severity: warning
+      appname: easy-sample-service
+    annotations:
+      summary: 应用服务|easy-sample-service,5分钟内获取微信支付签名信息失败，请检查失败原因
+- name: payCallback
+  rules:
+  - alert: 微信支付回调失败
+    expr: couter_api_error{api="payCallback"} == 1.0 or delta(couter_api_error{api="payCallback"}[5m]) != 0
+    for: 1m
+    labels:
+      severity: warning
+      appname: easy-sample-service
+    annotations:
+      summary: 应用服务|easy-sample-service,5分钟内微信支付回调失败，请检查失败原因
+- name: thirdApiYopoint
+  rules:
+  - alert: 友朋第三方接口失败
+    expr: couter_api_error{api="thirdApiYopoint"} == 1.0 or delta(couter_api_error{api="thirdApiYopoint"}[5m]) != 0
+    for: 1m
+    labels:
+      severity: warning
+      appname: easy-sample-service
+    annotations:
+      summary: 应用服务|easy-sample-service,5分钟内友朋第三方接口失败，请检查失败原因
+- name: activity.voucher.get
+  rules:
+  - alert: 友朋查询活动详情接口请求耗时
+    expr: (histogram_yopoint_api_consuming_count{api="activity.voucher.get"} == 1 and histogram_yopoint_api_consuming_sum{api="activity.voucher.get"} > 2) or increase(histogram_yopoint_api_consuming_sum{api="activity.voucher.get",}[5m]) / increase(histogram_yopoint_api_consuming_count{api="activity.voucher.get",}[5m]) > 2
+    for: 2m
+    labels:
+      severity: warning
+      appname: easy-sample-service
+    annotations:
+      summary: "应用服务|easy-sample-service,友朋查询活动详情接口请求耗时超过阈值-请检查失败原因"
+- name: terminal.terminal.get
+  rules:
+  - alert: 友朋查询设备详情接口请求耗时
+    expr: (histogram_yopoint_api_consuming_count{api="terminal.terminal.get"} == 1 and histogram_yopoint_api_consuming_sum{api="terminal.terminal.get"} > 2) or increase(histogram_yopoint_api_consuming_sum{api="terminal.terminal.get",}[5m]) / increase(histogram_yopoint_api_consuming_count{api="terminal.terminal.get",}[5m]) > 2
+    for: 2m
+    labels:
+      severity: warning
+      appname: easy-sample-service
+    annotations:
+      summary: "应用服务|easy-sample-service,友朋查询设备详情接口请求耗时超过阈值-请检查失败原因"
+- name: activity.voucher.receive.url.inapp
+  rules:
+  - alert: 获取兑换码的EncryptCode值请求耗时
+    expr: (histogram_yopoint_api_consuming_count{api="activity.voucher.receive.url.inapp"} == 1 and histogram_yopoint_api_consuming_sum{api="activity.voucher.receive.url.inapp"} > 2) or increase(histogram_yopoint_api_consuming_sum{api="activity.voucher.receive.url.inapp",}[5m]) / increase(histogram_yopoint_api_consuming_count{api="activity.voucher.receive.url.inapp",}[5m]) > 2
+    for: 2m
+    labels:
+      severity: warning
+      appname: easy-sample-service
+    annotations:
+      summary: "应用服务|easy-sample-service,获取兑换码的EncryptCode值请求耗时超过阈值-请检查失败原因"
+- name: activity.vouchercode.get
+  rules:
+  - alert: 获取兑换码接口请求耗时
+    expr: (histogram_yopoint_api_consuming_count{api="activity.vouchercode.get"} == 1 and histogram_yopoint_api_consuming_sum{api="activity.vouchercode.get"} > 2) or increase(histogram_yopoint_api_consuming_sum{api="activity.vouchercode.get",}[5m]) / increase(histogram_yopoint_api_consuming_count{api="activity.vouchercode.get",}[5m]) > 2
+    for: 2m
+    labels:
+      severity: warning
+      appname: easy-sample-service
+    annotations:
+      summary: "应用服务|easy-sample-service,获取兑换码接口请求耗时超过阈值-请检查失败原因"
+- name: activity.voucher.exchange
+  rules:
+  - alert: 兑换接口请求耗时
+    expr: (histogram_yopoint_api_consuming_count{api="activity.voucher.exchange"} == 1 and histogram_yopoint_api_consuming_sum{api="activity.voucher.exchange"} > 2) or increase(histogram_yopoint_api_consuming_sum{api="activity.voucher.exchange",}[5m]) / increase(histogram_yopoint_api_consuming_count{api="activity.voucher.exchange",}[5m]) > 2
+    for: 2m
+    labels:
+      severity: warning
+      appname: easy-sample-service
+    annotations:
+      summary: "应用服务|easy-sample-service,兑换接口请求耗时超过阈值-请检查失败原因"

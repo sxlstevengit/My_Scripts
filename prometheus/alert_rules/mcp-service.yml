@@ -1,0 +1,31 @@
+groups:
+- name: full_mcp_data_fail
+  rules:
+  - alert: 打商场全量-获取建站数据接口
+    expr: full_mcp_data_fail{host="",error_type="sys_error"} == 1.0 or full_mcp_data_fail{host="",error_type="biz_error"} == 1.0 or delta(full_mcp_data_fail{host="",error_type="sys_error"}[1m]) > 0 or delta(full_mcp_data_fail{host="",error_type="biz_error"}[1m]) > 0 
+    for: 1m
+    labels: 
+      severity: warning
+      appname: mcp-service
+    annotations:
+      summary: "应用服务|mcp-service,打商场全量-获取建站数据接口失败次数超过阈值-请检查失败原因" 
+- name: increment_mcp_base_data_fail
+  rules:
+  - alert: 增量-建站基础数据接口
+    expr: increment_mcp_base_data_fail{host="",error_type="sys_error"} == 1.0 or increment_mcp_base_data_fail{host="",error_type="biz_error"} == 1.0 or delta(increment_mcp_base_data_fail{host="",error_type="sys_error"}[1m]) > 0 or delta(increment_mcp_base_data_fail{host="",error_type="biz_error"}[1m]) > 0
+    for: 1m
+    labels: 
+      severity: warning
+      appname: mcp-service
+    annotations:
+      summary: "应用服务|mcp-service,增量-建站基础数据接口失败次数超过阈值-请检查失败原因" 
+- name: increment_mcp_data_fail
+  rules:
+  - alert: 增量-获取建站数据接口
+    expr: increment_mcp_data_fail{host="",error_type="sys_error"} == 1.0 or increment_mcp_data_fail{host="",error_type="biz_error"} == 1.0 or delta(increment_mcp_data_fail{host="",error_type="sys_error"}[1m]) > 0 or delta(increment_mcp_data_fail{host="",error_type="biz_error"}[1m]) > 0
+    for: 1m
+    labels: 
+      severity: warning
+      appname: mcp-service
+    annotations:
+      summary: "应用服务|mcp-service,增量-获取建站数据接口失败次数超过阈值-请检查失败原因" 

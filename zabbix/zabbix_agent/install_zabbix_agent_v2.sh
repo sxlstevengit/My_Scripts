@@ -40,7 +40,8 @@ sed -i 's/^ServerActive=.*/'"ServerActive=$SerIP"'/' $ZABBIX_AGENT_CONF
 sed -i 's/^Hostname=.*/'Hostname=`hostname`'/' $ZABBIX_AGENT_CONF
 sed -i 's/^# \(HostnameItem=.*\)/\1/' $ZABBIX_AGENT_CONF
 cat >> $ZABBIX_AGENT_CONF <<- EOF
-ListenIP=$(hostname -I|cut -f1)
+ListenIP=$(hostname -I|cut -d" " -f1)
+#ListenIP=$(hostname -i)
 User=ryuser
 LogFileSize=32
 EnableRemoteCommands=1

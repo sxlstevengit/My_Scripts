@@ -1,0 +1,14 @@
+version: '2.3'
+services:
+  web:
+    image:
+      nginx
+    links:
+      - db
+    ports:
+      - 8888:80
+  db:
+    image:
+      mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456 

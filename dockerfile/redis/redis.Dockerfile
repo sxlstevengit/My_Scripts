@@ -21,6 +21,7 @@ RUN mkdir -p /etc/redis &&\
     cd redis-${Ver} &&\
     make &&\
     make install &&\
+    sed -i 's/^bind 127.0.0.1/bind 0.0.0.0/' redis.conf &&\
     cp redis.conf /etc/redis/redis.conf &&\
     apk --no-cache del musl-dev coreutils curl make gcc g++ linux-headers tcl &&\
     rm -rf /tmp/* /var/cache/apk/* \

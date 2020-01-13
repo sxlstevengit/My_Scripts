@@ -1,0 +1,23 @@
+FROM alpine:3.11.3
+LABEL maintainer="steven <sxl_youcun@qq.com>" \
+      version="glibc1.0.0" \
+      glibc_version="2.29"
+
+COPY ./glibc/glibc-2.29-r0.apk /tmp/glibc-2.29-r0.apk
+COPY ./glibc/glibc-bin-2.29-r0.apk /tmp/glibc-bin-2.29-r0.apk
+COPY ./glibc/glibc-i18n-2.29-r0.apk /tmp/glibc-i18n-2.29-r0.apk
+COPY ./glibc/sgerrand.rsa.pub /etc/apk/keys/sgerrand.rsa.pub
+
+RUN echo 'http://mirrors.ustc.edu.cn/alpine/v3.5/main' > /etc/apk/repositories \
+    && echo 'http://mirrors.ustc.edu.cn/alpine/v3.5/community' >>/etc/apk/repositories \
+    && cd /tmp/ \
+    && apk add glibc-2.29-r0.apk glibc-bin-2.29-r0.apk glibc-i18n-2.29-r0.apk \
+    && apk update && apk add tzdata \
+    && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \ 
+    && echo "Asia/Shanghai" > /etc/timezone \
+    && /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8 \
+    && cd - \
+    && rm -rf /tmp/* \
+    && rm -f /etc/apk/keys/sgerrand.rsa.pub \
+    && mkdir -p /data/servers
+

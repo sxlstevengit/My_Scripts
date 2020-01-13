@@ -1,0 +1,37 @@
+# This is a docker file 
+# Version: v1
+# Author: steven.shi
+
+FROM centos
+
+MAINTAINER steven.shi sxl_youcun@qq.com
+
+#RUN rpm -ivh https://mirrors.aliyun.com/epel/epel-release-latest-7.noarch.rpm
+#RUN yum install -y vim 
+RUN groupadd -g 2017 ryuser
+RUN useradd -d /home/ryuser -m -s /bin/bash -u 2017 -g 2017 ryuser
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+ADD jdk-8u212-linux-x64.tar.gz /usr/local
+ADD apache-tomcat-8.5.16.tar.gz /usr/local
+RUN mkdir -p /data && mv /usr/local/apache-tomcat-8.5.16 /usr/local/tomcat
+
+ENV LANG=zh_CN.UTF-8
+ENV JAVA_HOME=/usr/local/jdk1.8.0_212
+ENV JRE_HOME=$JAVA_HOME/jre \
+    CLASSPATH=.:/usr/local/jdk1.8.0_201/lib:/usr/local/jdk1.8.0_201/jre/lib
+ENV PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$JAVA_HOME:$PATH
+
+
+VOLUME ["/usr/local/tomcat/logs","/data/etc"]
+COPY catalina.sh /usr/local/tomcat/bin
+#COPY tomcatstart.sh /usr/local/tomcat/bin
+RUN chmod +x /usr/local/tomcat/bin/{catalina.sh,startup.sh}
+
+EXPOSE 8080
+#VOLUME ["/usr/local/tomcat/logs","/data/etc"]
+
+RUN chown ryuser.ryuser -R /usr/local/tomcat
+WORKDIR /usr/local/tomcat
+
+CMD ["/usr/local/tomcat/bin/catalina.sh","run"]

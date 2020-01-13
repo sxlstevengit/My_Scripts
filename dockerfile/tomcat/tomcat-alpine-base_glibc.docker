@@ -1,0 +1,34 @@
+FROM sxlsteven/alpine:glibc1.0.0
+LABEL maintainer="abc <abc@163.com>" \
+      jdkversion=1.8.0_201 \
+      tomcat=8.5.39 \
+
+ENV LANG=zh_CN.UTF-8 \
+    JDK_VER="jdk1.8.0_201" \
+    TOMCAT_VER="apache-tomcat-8.5.39" \
+    JDK_TAR="jdk-8u201-linux-x64" \
+    JAVA_HOME=/usr/local/jdk1.8.0_201 \
+    JRE_HOME=/usr/local/jdk1.8.0_201/jre \
+    CLASSPATH=.:/usr/local/jdk1.8.0_201/lib:/usr/local/jdk1.8.0_201/jre/lib \
+    PATH=/usr/local/jdk1.8.0_201/bin:/usr/local/jdk1.8.0_201/jre/bin:$PATH
+
+ADD ${JDK_TAR}.tar.gz /usr/local/
+COPY ${TOMCAT_VER} /usr/local/tomcat
+COPY ./entrypoint.sh /bin/entrypoint.sh
+
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai  /etc/localtime &&\
+    echo "export LC_ALL=zh_CN.UTF-8"  >>  /etc/profile &&\
+    mkdir -p /data/servers
+
+#COPY ./skywalking /data/skywalking
+
+
+WORKDIR /data
+
+EXPOSE 8080/tcp
+VOLUME ["/usr/local/tomcat/logs"]
+VOLUME ["/data/etc"]
+
+
+CMD ["/usr/local/tomcat/bin/catalina.sh","run"]
+ENTRYPOINT ["/bin/entrypoint.sh"]

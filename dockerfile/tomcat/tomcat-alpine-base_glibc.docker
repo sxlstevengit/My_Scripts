@@ -30,5 +30,5 @@ VOLUME ["/usr/local/tomcat/logs"]
 VOLUME ["/data/etc"]
 
 
-CMD ["/usr/local/tomcat/bin/catalina.sh","run"]
+CMD ["/usr/local/jdk1.8.0_201/bin/java"]
 ENTRYPOINT ["/bin/entrypoint.sh"]

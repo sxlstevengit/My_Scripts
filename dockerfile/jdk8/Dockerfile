@@ -1,0 +1,33 @@
+FROM alpine:3.11.3
+MAINTAINER sxl <sxl_youcun@qq.com>
+ENV UPDATE_TIME=2020-01-06 \
+    LANG=en_US.UTF-8 \
+    JDK_VER=jdk1.8.0_212 \
+    JAVA_HOME=/usr/local/jdk1.8.0_212 \
+    JRE_HOME=/usr/local/jdk1.8.0_212/jre \
+    CLASSPATH=.:/usr/local/jdk1.8.0_212/lib:/usr/local/jdk1.8.0_212/jre/lib \
+    PATH=/usr/local/jdk1.8.0_212/bin:/usr/local/jdk1.8.0_212/jre/bin:$PATH
+	
+	
+WORKDIR /usr/local/
+ADD ${JDK_VER}.tar.gz ./
+
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai  /etc/localtime &&\
+    echo http://mirrors.ustc.edu.cn/alpine/v3.9/main > /etc/apk/repositories &&\
+    echo http://mirrors.ustc.edu.cn/alpine/v3.9/community >> /etc/apk/repositories &&\
+    apk upgrade --update-cache &&\
+    apk --no-cache add ca-certificates && \
+    wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub &&\
+    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.29-r0/glibc-2.29-r0.apk &&\
+    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.29-r0/glibc-i18n-2.29-r0.apk &&\
+    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.29-r0/glibc-bin-2.29-r0.apk &&\
+    apk --no-cache add glibc-2.29-r0.apk glibc-bin-2.29-r0.apk glibc-i18n-2.29-r0.apk &&\
+    addgroup -g 2017 ryuser &&\
+    adduser -h /home/ryuser -D -S -s /bin/bash -u 2017 -G ryuser ryuser &&\
+    echo "export LC_ALL=zh_CN.UTF-8" >> /etc/profile &&\
+    mkdir -p /data/servers &&\
+    rm -rf /tmp/* /var/cache/apk/* \
+      ./glibc-2.29-r0.apk ./glibc-bin-2.29-r0.apk ./glibc-i18n-2.29-r0.apk
+
+EXPOSE 8080
+

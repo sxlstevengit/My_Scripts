@@ -1,0 +1,36 @@
+#!/usr/bin/expect
+
+set timeout 30
+
+spawn mysql_secure_installation
+
+expect "Enter current password for root (enter for none):"
+send "Rycloud.com123\n"
+
+# 注释的部分是选择修改密码
+#expect "Change the root password?*"
+#send "Y\n"
+#
+#expect "New password:"
+#send "Rycloud.com123"
+#
+#expect "Re-enter new password:"
+#send "Rycloud.com123"
+
+expect "Change the root password?*"
+send "n\n"
+
+expect "Remove anonymous users?*"
+send  "Y\n"
+
+expect "Disallow root login remotely?*"
+send "Y\n"
+
+expect "Remove test database and access to it?*"
+send "Y\n"
+
+expect "Reload privilege tables now?*"
+send "Y\n"
+
+expect eof
+

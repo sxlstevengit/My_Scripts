@@ -1,4 +1,4 @@
-#######The following parameters are for 4G mem server############
+﻿#######The following parameters are for 4G mem server############
 [client]
 port = 3306
 socket = /tmp/mysql.sock
@@ -11,6 +11,7 @@ user = mysql
 bind_address = 0.0.0.0
 autocommit = 1
 character_set_server=utf8mb4
+collation-server=utf8mb4_general_ci
 lower_case_table_names = 0
 skip_name_resolve = 1
 max_connections = 5000

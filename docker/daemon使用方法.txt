@@ -1,15 +1,15 @@
-#ÏÂÃæµÄetcd.abc.comÓòÃû¸Ä³É×Ô¼ºµÄÓòÃû
+#ä¸‹é¢çš„etcd.abc.comåŸŸåæ”¹æˆè‡ªå·±çš„åŸŸå
 
 "cluster-store": "etcd://etcd.abc.com:2379",
 
-#°Ñens33¸Ä³ÉÄã·şÎñÆ÷µÄÍø¿¨Ãû³Æ
+#æŠŠens33æ”¹æˆä½ æœåŠ¡å™¨çš„ç½‘å¡åç§°
 
 "cluster-advertise": "ens33:2375",
 
-#repo.rongyi.com¸Ä³ÉÄã×Ô¼ºµÄregistries·şÎñÆ÷
+#repo.rongyi.comæ”¹æˆä½ è‡ªå·±çš„registriesæœåŠ¡å™¨
 
-insecure-registries": ["repo.rongyi.com:5000"]
+insecure-registries": ["repo.abc.com:5000"]
 
-# ¸Ä³É×Ô¼ºÊı¾İÂ·¾¶
+# æ”¹æˆè‡ªå·±æ•°æ®è·¯å¾„
 
 "graph": "/data/docker",

@@ -44,3 +44,9 @@ CMD ["/usr/sbin/init"]   <br>
 
 docker build -t sxlsteven/baota:1.0.2 -f baota.dockerfile . 
 
+
+镜像使用
+========
+[镜像使用教程](https://github.com/sxlstevengit/baota)
+
+

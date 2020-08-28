@@ -1,8 +1,8 @@
 说明
 ====
 
-#安装宝塔时无法直接用构建的方式安装,会出现一直卡着不动问题。
-#软件安装可以选择简易安装。编译安装空间占用比较大。
+* 安装宝塔时无法直接用构建的方式安装,会出现一直卡着不动问题。
+* 软件安装可以选择简易安装。编译安装空间占用比较大。
 
 步骤如下：
 =========
@@ -35,10 +35,10 @@ docker commit -m "baota7.4.5 include lnmp" 0de9a47acc79 baota:0.0.2
 ### 4. 以第3步中的镜像为base，写一个dockerfile, 制作最终镜像（如果不需要加个人信息之类，4和5可以不做）。
 
 FROM baota:0.0.2
-LABEL MAINTAINER="sxl_youcun@qq.com" \
-      author="steven"
-EXPOSE 20 21 80 443 888 8888
-CMD ["/usr/sbin/init"]
+LABEL MAINTAINER="sxl_youcun@qq.com" \ <br>
+      author="steven"     <br>
+EXPOSE 20 21 80 443 888 8888   <br>
+CMD ["/usr/sbin/init"]   <br>
 
 ### 5. 构建最终镜像
 

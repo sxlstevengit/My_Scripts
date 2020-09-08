@@ -1,0 +1,24 @@
+FROM alpine:latest
+LABEL Maintainer="sxl_youcun@qq.com" \
+      Author="steven" \
+      Ng_Ver=1.18.0
+ENV NG_DIR=/etc/nginx \
+    NG_WEB_ROOT=/www \
+    NG_VER=1.18.0 \
+    LANG="en_US.UTF-8"
+WORKDIR /
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
+    apk add --no-cache tzdata && \
+    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo "Asia/Shanghai" > /etc/timezone && \ 
+    #/usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8 && \
+    apk add --no-cache nginx && \
+    mkdir -p $NG_WEB_ROOT /run/nginx && \
+    rm -rf /tmp/* /var/cache/apk/*  /var/lib/apk/* /etc/apk/cache/*
+
+ADD index.html $NG_WEB_ROOT/
+COPY entrypoint.sh /bin/
+    
+EXPOSE 80
+CMD ["nginx","-g","daemon off;"]
+ENTRYPOINT ["entrypoint.sh"]

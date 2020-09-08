@@ -1,0 +1,11 @@
+FROM nginx:1.19.2-alpine
+LABEL Maintainer="sxl_youcun@qq.com" \
+      Author="steven" \
+      Ng_Ver="1.19.2"
+ENV  NG_WEB_ROOT=/data/www
+WORKDIR $NG_WEB_ROOT
+ADD entrypoint.sh /bin/
+COPY index.html $NG_WEB_ROOT/
+EXPOSE 80
+#CMD ["nginx","-g","daemon off;"]
+ENTRYPOINT ["entrypoint.sh"]

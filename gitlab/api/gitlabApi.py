@@ -7,7 +7,7 @@ import requests
 import json
 
 gitlab_url = "http://192.168.10.74:9080/api/v4/projects"
-admin_token = "FCq1uYzu9isp73hbX2ETEKA"
+admin_token = "FCq1uYzu9isp73hbX2ETAp"
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36",
            "PRIVATE-TOKEN": admin_token
            }
@@ -18,10 +18,13 @@ def create_project(project_name):
     data = {"name": project_name, "namespace_id": 7}
     response = requests.post(gitlab_url,headers=headers,data=data)
     result_dict = json.loads(response.content.decode())
-    print("项目%s创建成功,请保存下面的信息" %project_name)
-    for i in result_dict:
-        if i == "id" or i == "web_url" or i == "ssh_url_to_repo" or i == "http_url_to_repo":
-            print("%s: %s" %(i, result_dict[i]))
+    if "has already been taken" in str(result_dict):
+        print("该名称空间中项目已存在,请确认或者修改项目名称")
+    else:
+        print("项目%s创建成功,请保存下面的信息" %project_name)
+        for i in result_dict:
+            if i == "id" or i == "web_url" or i == "ssh_url_to_repo" or i == "http_url_to_repo":
+                print("%s: %s" %(i, result_dict[i]))
 
 #删除项目
 def delete_project(project_name):
@@ -29,17 +32,27 @@ def delete_project(project_name):
     del_url = gitlab_url + "/" + str(project_id)
     response = requests.delete(url=del_url,headers=headers)
     result_list = json.loads(response.content.decode())
+    print(result_list)
     if "202 Accepted" in str(result_list):
         print("项目删除成功")
 
 #获取项目的project_id
+# 1: 注意项目名称类似test、test11，如果查询test，则test11也会查询出来，已修复此问题。
+# 2：如果是多个名称空间下面的项目名相同，查询会全部显示出来，所以需要结合名称空间(namespace_id)才能唯一确定该项目。已修复
 def get_project_id(project_name):
+    namespace_id = 7
     id_url = gitlab_url + "?search={}"
     response = requests.get(url=id_url.format(project_name), headers=headers)
     result_list = json.loads(response.content.decode() )
-    project_id = result_list[0]["id"]
-    print("项目id是:%d" % project_id)
-    return project_id
+    print(result_list[0])
+    if not result_list:
+        print("项目不存在")
+    else:
+        for i in result_list:
+            if i["name"] == project_name and i["namespace"]["id"] == namespace_id:
+                project_id = i["id"]
+                print("项目id是:%d" % project_id)
+                return project_id
 
 # 创建分支
 def create_branch(project_name,branch_name):
@@ -79,11 +92,15 @@ def get_group_id(group_name):
     get_url = "http://192.168.10.74:9080/api/v4/groups"
     response = requests.get(get_url,headers=headers)
     result_list = json.loads(response.content.decode())
-    for i in range(len(result_list)):
-        #print(result_list[i])
-        if result_list[i]["name"] == group_name:
-            print(result_list[i]["id"])
-            return result_list[i]["id"]
+    if group_name not in str(result_list):
+        print("%s组不存在" %group_name)
+    else:
+        for i in range(len(result_list)):
+            #print(result_list[i])
+            if result_list[i]["name"] == group_name:
+                print(result_list[i]["id"])
+                return result_list[i]["id"]
+
 
 # 删除组group
 def delete_group(group_name):
@@ -116,10 +133,13 @@ def get_user_id(name):
     get_user_url = "http://192.168.10.74:9080/api/v4/users"
     response = requests.get(url=get_user_url,headers=headers)
     result = json.loads(response.content.decode())
-    for i in result:
-        if i["name"] == name:
-            print(i["id"])
-            return i["id"]
+    if name not in str(result):
+        print("%s用户不存在"%name)
+    else:
+        for i in result:
+            if i["name"] == name:
+                print(i["id"])
+                return i["id"]
 
 # 阻止用户(block_user和unblock_user是一对反向操作命令)
 # 一般来说在任何情况下都可以block_user和unblock_user.
@@ -196,12 +216,12 @@ def delete_user(name):
 # 程序入口
 if __name__ == "__main__":
     project_name = "buorg"
-    #create_project(project_name)
+    # create_project(project_name)
     # branch_name = "ryv4"
     #create_project(project_name)
     #delete_project(project_name)
     #create_branch(project_name,branch_name)
-    # get_project_id(project_name)
+    get_project_id(project_name)
     # delete_branch(project_name,branch_name)
     group_name = "shanghai"
     group_path = "shanghai"
@@ -209,13 +229,13 @@ if __name__ == "__main__":
     # get_group_id(group_name)
     # delete_group(group_name)
     username = "tom"
-    name = "tom"
+    name = "jim"
     password = "Adminroot123"
     email = "abc@qq.com"
     #create_user(username,name,password,email)
-    # get_user_id(name)
+    #get_user_id(name)
     #delete_user(name)
-    block_user(name)
+    #block_user(name)
     #unblock_user(name)
     #deactivate_user(name)
     #activate_user(name)

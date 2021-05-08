@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 # Function: This script is used to setup mysql5.7.30
 # 请将脚本和安装包放一个目录.
 # Date: 2020.06.15
@@ -10,7 +10,7 @@
 
 Install_Mysql(){
 # set up enviroment for mysql
-yum install -y perl-Module-Install.noarch bison gcc-c++ ncurses-devel openssl-devel
+yum install -y cmake wget perl-Module-Install.noarch bison gcc-c++ ncurses-devel openssl-devel
 
 # add mysql user and create directory
 useradd -u 27 -d /home/mysql/ -s /sbin/nologin mysql
@@ -24,7 +24,11 @@ tar -zxvf mysql-boost-5.7.30.tar.gz
 cd mysql-5.7.30
 
 # start install mysql
-cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DDEFAULT_CHARSET=utf8 -DENABLED_LOCAL_INFILE=1 -DMYSQL_DATADIR=/data/mysql/ -DSYSCONFDIR=/etc/mysql -DWITH_EXTRA_CHARSETS=all -DWITH_READLINE=1 -DWITH_INNOBASE_STORAGE_ENGINE=1 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_READLINE=1 -DWITH_SSL=system -DWITH_LIBWRAP=0 -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DWITH_ZLIB=system -DDOWNLOAD_BOOST=1 -DWITH_BOOST=./boost/boost_1_59_0 && make -j `cat /proc/cpuinfo | grep processor | wc -l` && make install
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DDEFAULT_CHARSET=utf8 -DENABLED_LOCAL_INFILE=1 \
+-DMYSQL_DATADIR=/data/mysql/ -DSYSCONFDIR=/etc/mysql -DWITH_EXTRA_CHARSETS=all -DWITH_READLINE=1 \
+-DWITH_INNOBASE_STORAGE_ENGINE=1 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_READLINE=1 \
+-DWITH_SSL=system -DWITH_LIBWRAP=0 -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DWITH_ZLIB=system \
+-DDOWNLOAD_BOOST=1 -DWITH_BOOST=./boost/boost_1_59_0 && make -j `cat /proc/cpuinfo | grep processor | wc -l` && make install
 
 }
 

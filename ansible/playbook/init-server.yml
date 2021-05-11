@@ -1,11 +1,11 @@
----
+﻿---
 - hosts: bigops
   remote_user: root
   gather_facts: yes
   vars:
-    userid: ryuser
+    userid: opuser
     uid: 2017
-    repo: opgit.rongyi.so
+    repo: opgit.abc.so
     ser_name: bigops-server
   tasks:
    - name: create .ssh directory

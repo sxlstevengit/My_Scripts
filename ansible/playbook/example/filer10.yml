@@ -1,0 +1,12 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - debug:
+     msg: index is {{item.0}}, value is {{item.1}}
+    with_indexed_items: [a,b,c]
+
+  - debug:
+     msg: index is {{item.0}}, value is {{item.1}}
+    loop: "{{lookup('indexed_items',['a','b','c'])}}"

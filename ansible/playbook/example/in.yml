@@ -1,0 +1,9 @@
+#- debug:
+#   msg: "{{item.key}} is {{item.value.gender}}"
+#  loop: "{{users|dict2items}}"
+#- debug:
+#   msg: "{{item.key}} is {{item.value.gender}}"
+#  with_dict: "{{users}}"
+- debug:
+   msg: "{{item.key}} is {{item.value.gender}}"
+  loop: "{{lookup('dict',users)}}"

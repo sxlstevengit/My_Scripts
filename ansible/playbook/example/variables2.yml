@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  remote_user: root
+  gather_facts: no
+  vars_files:
+  - vars/testvar.yml
+  tasks:
+  - debug:
+     msg: "{{va1}}"
+  - lineinfile: 
+     path: "vars/testvar.yml"
+     line: 'va2: hello world'
+  - include_vars: "vars/testvar.yml"
+  - debug:
+     msg: "{{va2}}"

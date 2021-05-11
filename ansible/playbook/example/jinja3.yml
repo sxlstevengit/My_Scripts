@@ -1,0 +1,11 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars:
+   testnum: 3
+   list1: [1,2,3]
+  tasks:
+   - template: 
+      src: 3.j2
+      dest: /tmp/jinja3.j2

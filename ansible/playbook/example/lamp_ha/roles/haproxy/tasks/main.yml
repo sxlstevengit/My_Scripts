@@ -1,0 +1,9 @@
+---
+#This role install haproxy and config it
+- name: install haproxy in yum ways
+  yum: name={{ haproxy_pack }} state=present
+- name: configure the haproxy config
+  template: src=haproxy.temp dest=/etc/haproxy/haproxy.cfg
+  notify: restart haproxy
+- name: Start the haproxy service
+  service: name=haproxy state=started enabled=yes

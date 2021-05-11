@@ -1,0 +1,28 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name: install mysql
+    debug: 
+     msg: "installing mysql"
+  - name: install php
+    debug: 
+     msg: "installing php"
+  - name: install apache
+    debug: 
+     msg: "installing httpd"
+
+- hosts: B
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name: install mysql
+    debug:
+     msg: "installing mysql"
+  - name: install php
+    debug:
+     msg: "installing php"
+  - name: install apache
+    debug:
+     msg: "installing httpd"

@@ -1,0 +1,10 @@
+---
+- hosts: test
+  remote_user: root
+  gather_facts: no
+  tasks:
+   - name: test play_hosts
+     debug: 
+      msg: this is {{ play_hosts }}
+     debug: 
+      msg: this is {{ groups }}

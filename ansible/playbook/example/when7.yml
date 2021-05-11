@@ -1,0 +1,15 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars:
+   va1: ABC
+   va2: abc
+  tasks:
+  - debug:
+     msg: This variables is all uppercase
+    when: va1 is upper
+  - debug:
+     msg: This variables is all lowercase
+    when: va2 is lower
+

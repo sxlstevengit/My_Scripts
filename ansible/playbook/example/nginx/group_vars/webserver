@@ -1,0 +1,6 @@
+---
+worker_processes: 4
+num_cpus: 4
+max_open_file: 65536
+listen: 9099
+root: /data/html

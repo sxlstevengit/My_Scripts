@@ -1,0 +1,28 @@
+---
+- name: deny root login by ssh
+  hosts: bigops
+  remote_user: root
+  gather_facts: no
+  tasks:
+   - name: set sshd config
+     block:
+      - name: backup sshd config
+        shell: cp {{path}} {{path}}.backup
+        vars:
+         path: /etc/ssh/sshd_config
+
+      - name: disable root login
+        lineinfile:
+          path: "/etc/ssh/sshd_config"
+          line: "PermitRootLogin no
+          insertafter: "^#PermitRootLogin"
+          regexp: "^PermitRootLogin"
+      - name: disable password auth
+        lineinfile: 
+          path: "/etc/ssh/sshd_config"
+          line: "PasswordAuthentication no"
+          regexp: "^PasswordAuthentication yes"
+        notify: "restart sshd"
+  handlers:
+    - name: "restart sshd"
+      service: name=sshd state=restarted

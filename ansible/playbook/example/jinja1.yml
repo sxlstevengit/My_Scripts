@@ -1,0 +1,10 @@
+---
+- hosts: B,C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - debug: 
+     msg: test template file
+  - template:
+     src: redis.conf
+     dest: /etc/redis.conf

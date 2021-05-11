@@ -1,0 +1,7 @@
+---
+- hosts: sky
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name: test push ssh_public_key to remote server
+    authorized_key: user=root key="{{lookup('file','/root/.ssh/id_rsa.pub')}}" state=present

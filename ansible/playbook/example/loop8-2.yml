@@ -1,0 +1,21 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars:
+   users:
+   - name: bob
+     gender: male
+     hobby:
+     - Skateboard
+     - VideoGame
+   - name: alice
+     gender: male
+     hobby:
+     - Music
+  tasks:
+  - debug:
+     msg: "{{item.0.name}}'s hobby is {{item.1}}"
+    with_subelements:
+    - "{{users}}"
+    - hobby

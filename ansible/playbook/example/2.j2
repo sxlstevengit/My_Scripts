@@ -1,0 +1,109 @@
+{% set test='abc' %}
+ 
+(( test ))
+ 
+
+# 宏
+{% macro testfun() %}
+test string
+{% endmacro %}
+
+{{ testfun() }}
+
+
+{% set t1='hello word' %}
+{% set t2=123 %}
+{% macro fun1(va1,va2)%}
+test macro
+{{ va1 }}--{{va2}}
+{% endmacro %}
+
+{{ fun1(t1,t2) }}
+
+
+{% macro fun2(va1=100) %}
+test macro
+{{va1}}
+{% endmacro %}
+{{fun2()}}
+{{fun2(66)}}
+
+
+# position of argument
+{% macro fun3(va2,va1=1,va3=100) %}
+{{va1}}
+{{va2}}
+{{va3}}
+{% endmacro %}
+
+{{fun3('abc')}}
+
+
+{% macro fun4(va2,va1=1,va3=100) %}
+{{va1}}
+{{va2}}
+{{va3}}
+{% endmacro %}
+
+{{fun4('abc',va3=999)}}
+
+
+{% macro fun5(va2,va1=1,va3=100) %}
+{{va1}}
+{{va2}}
+{{va3}}
+{{varargs}}
+{% endmacro %}
+
+{{fun5('a','b','c','d','e','f')}}
+
+
+{% macro testfunc(tv1='tv1') %}
+  test string
+  {{varargs}}
+  {{kwargs}}
+{% endmacro %}
+ 
+{{ testfunc('a',2,'test',testkeyvar='abc') }}
+
+
+{% macro fun6(t1=124) %}
+test string
+{{t1}}
+{{varargs}}
+{{kwargs}}
+{% endmacro %}
+
+{{ fun6('aa','bb','cc',ha="111",hb="222") }}
+
+
+{% macro kkfunc() %}
+test string
+{{caller()}}
+{% endmacro %}
+
+{% call kkfunc() %}
+nihao~~~~~~~~~~~~
+hello world~~~~~~~~~
+{% endcall %}
+
+{% call kkfunc() %}
+{{fun6()}}
+{% endcall %}
+
+{% macro qfunc() %}
+test haha
+{{caller(888)}}
+{% endmacro %}
+
+{% call(testvar) qfunc() %}
+lalala ~~~~~~~~~~lalala
+{{testvar}}
+{% endcall %}
+
+{{qfunc.name}}
+{{fun6.arguments}}
+{{fun6.defaults}}
+{{fun6.catch_varargs}}
+{{fun6.catch_kwargs}}
+{{qfunc.caller}}

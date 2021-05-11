@@ -1,0 +1,12 @@
+---
+- hosts: bigops
+  remote_user: root
+  gather_facts: yes
+  tasks:  
+  - name: config yum repo
+    get_url: url={{ item.url }} dest=/etc/yum.repos.d force=yes
+    with_items:
+    - {url: "http://mirrors.aliyun.com/repo/Centos-6.repo",os_version: "6"}
+    - {url: "http://mirrors.aliyun.com/repo/Centos-7.repo",os_version: "7"}
+    - {url: "http://mirrors.aliyun.com/repo/Centos-8.repo",os_version: "8"}
+    when: ansible_distribution == "CentOS" and ansible_distribution_major_version == (item.os_version)

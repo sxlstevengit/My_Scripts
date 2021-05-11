@@ -1,0 +1,19 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars: 
+   fname1: in3.yml
+  tasks:
+  - set_fact:
+     fn: 2
+  - debug:
+     msg: test tasks1
+    tags: t0
+ # - include_tasks: 
+  - include_tasks: "{{fname1}}"
+    when: fn==2
+#     apply:
+#      tags: t1
+  - debug:
+     msg: test task2

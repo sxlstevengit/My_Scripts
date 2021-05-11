@@ -1,0 +1,10 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  roles:
+  - role: demo
+    vars:
+      testvar: "hello world"
+  - role: demo1
+  - role: demo1

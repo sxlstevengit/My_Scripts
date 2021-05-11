@@ -1,0 +1,8 @@
+---
+- hosts: dk-java
+  remote_user: root
+  gather_facts: no
+  tasks:  
+  - name: restart java app
+    script: ./scripts/restart_dkapp.sh dkpark-backend
+    #with_items: [dkpark-backend,dkpark-job,dkpark-mock,dkpark-service]

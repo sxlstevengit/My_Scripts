@@ -1,0 +1,12 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - include: in3.yml
+    when: 2 > 1
+  - include: in3.yml
+    loop:
+    - 1
+    - 2
+    - 3

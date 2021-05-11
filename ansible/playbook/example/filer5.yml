@@ -1,0 +1,14 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars:
+   paths: 
+   - va1: /tmp/k1
+     mode: '0400'
+   - va1: /tmp/k2
+   - va1: /tmp/k3
+  tasks:
+  - name: touch file
+    file: dest={{item.va1}} state=touch mode={{item.mode|default(omit)}} 
+    with_items: "{{ paths }}" 

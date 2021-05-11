@@ -1,0 +1,8 @@
+---
+- hosts: C
+  remote_user: root
+  tasks:
+  - name: test task1
+    debug:
+      msg: "I will copy file1 to Centos7"
+    when: ansible_distribution_version == "7.3.1612"

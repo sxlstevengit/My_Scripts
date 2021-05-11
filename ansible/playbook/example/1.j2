@@ -1,0 +1,96 @@
+test jinja2 variable
+
+#variable
+{{testva1}}
+
+#比较操作
+{{1==1}}
+{{1!=1}}
+{{2>=1}}
+{{2<1}}
+
+#逻辑操作
+
+{{(2>1) or (2>3)}}
+{{(2>1) and (2>3)}}
+
+{{not true}}
+{{not True}}
+{{not false}}
+{{not False}}
+
+
+#算术运算
+{{5+3}}
+{{5-2}}
+{{5*2}}
+{{5/2}}
+{{5**2}}
+{{5//2}}
+{{17%2}}
+
+
+#成员关系
+{{ a in [a,b,c]}}
+{{ a not in [a,b,c]}}
+
+
+#string
+{{"hello word"}}
+{{'hello babay'}}
+
+#number
+{{18}}
+{{19.6}}
+
+#list
+{{[1,2,3,4,5]}}
+{{[1,2,3,4,5].2}}
+{{[1,2,3,4,5][2]}}
+
+
+#tuple
+{{('a','b','c','d')}}
+{{('a','b','c','d').0}}
+{{('a','b','c','d')[0]}}
+
+#dict
+
+{{ {'a':123,'b':456}  }}
+{{ {'a':123,'b':456}.a  }}
+{{ {'a':123,'b':456}['a']  }}
+
+#boolean
+{{true}}
+{{True}}
+{{false}}
+{{False}}
+
+
+#filter
+{{'abc'|upper }}
+{{'ABC'|lower }}
+
+#test variables defined or undefined
+{{ testvar1 is defined }}
+{{ testvar1 is undefined }}
+{{ '/opt' is exists }}
+{{ '/opt' is file }}
+{{ '/opt' is directory }}
+
+
+# lookup
+{{ lookup('file','/root/1.conf') }}
+{{ lookup('env','PATH')}}
+
+
+
+#test 注释
+{#这是一行注释啊。拉拉#}
+jinja2 test
+{#这是多行注释
+  模板文件被渲染以后，
+  最终的文件中不会包含此信息
+
+
+#}

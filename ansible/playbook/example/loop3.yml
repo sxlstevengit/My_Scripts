@@ -1,0 +1,14 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars:
+   fdir:
+   - /tmp/a
+   - /tmp/b
+   - /tmp/c
+   - /tmp/d
+  tasks:
+  - name: test mkdir file
+    file: path={{ item }} state=touch
+    with_items: "{{ fdir }}"

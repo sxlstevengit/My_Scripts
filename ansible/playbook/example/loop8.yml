@@ -1,0 +1,12 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars:
+   users:
+    alice: female
+    bob: male
+  tasks:
+  - debug: 
+     msg: key is {{item.key }},values is {{item.value}}
+    with_dict: "{{users}}"

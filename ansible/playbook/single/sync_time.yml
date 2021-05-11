@@ -1,0 +1,16 @@
+---
+- name: sync time
+  hosts: bigops
+  remote_user: root
+  gather_facts: yes
+  tasks:
+    - name: install and sync time
+      block:
+        - name: install ntpdate
+          debug: 
+            msg: this is a test
+        - name: ntpdate to sync time
+          shell: |
+            ntpdate ntp1.aliyun.com
+            hwclock -w
+    

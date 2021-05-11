@@ -1,0 +1,43 @@
+---
+- hosts: dk-java
+  remote_user: root
+  gather_facts: no
+  vars:
+    dkbackend: "/data/servers/dkpark-backend"
+    dkjob: "/data/servers/dkpark-job"
+    dkmock: "/data/servers/dkpark-mock"
+    dkservice: "/data/servers/dkpark-service"
+  tasks:  
+  - name: create dir 
+    shell: |
+      mkdir -p /data/servers/{dkpark-backend,dkpark-job,dkpark-mock,dkpark-service}  
+      mkdir -p  /data/etc/projects/ /data/dkpark/download_file/ /dkpark_source/fe/
+  
+  - name: configure ssh connection no password
+    block:
+     - copy: src="../config/myansible.pub" dest="/tmp/authorized_keys" 
+     - file: path="~/.ssh" state=directory
+     - shell: cat /tmp/authorized_keys >> ~/.ssh/authorized_keys && rm -rf /tmp/authorized_keys
+
+  - name: rsync install
+    yum: name={{software}}
+    vars:
+      software: [rsync]
+
+  - name: sync file
+    synchronize: src=./conf/ dest=/data/etc/projects/
+
+  - name: sync file
+    copy: src=./java/{{item}}.sh dest=/data/servers/{{item}}/ mode=u+x
+    with_items: [dkpark-backend,dkpark-job,dkpark-mock,dkpark-service]
+  
+  - name: copy java file
+    copy: src=./java/{{ item }}-0.0.1-SNAPSHOT.jar dest=/data/servers/{{item}}/{{item}}.jar 
+    with_items: [dkpark-backend,dkpark-job,dkpark-mock,dkpark-service]
+
+  - name: start service
+    shell: |
+     source /etc/profile && cd {{ dkbackend }} && ./dkpark-backend.sh
+     source /etc/profile && cd {{ dkjob }} && ./dkpark-job.sh
+     source /etc/profile && cd {{ dkmock }} && ./dkpark-mock.sh
+     source /etc/profile && cd {{ dkservice }} && ./dkpark-service.sh

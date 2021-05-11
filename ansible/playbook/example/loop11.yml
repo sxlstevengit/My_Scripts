@@ -1,0 +1,76 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars:
+   users:
+    alice: female
+    bob: male
+   testlist:
+   - a
+   - [b,c]
+   - c
+   t1: [a,b,c]
+   t2: [1,2,3,4]
+   t3: [A,B,C,D]
+  tasks:
+  - debug:
+     msg: "{{item.key}} is {{item.value}}"
+    loop: "{{users|dict2items}}"
+  - debug:
+     msg: "{{item}}"
+    loop: "{{testlist}}"
+  - debug:
+      msg: "{{item}}"
+    loop: "{{testlist|flatten}}"
+  - debug:
+      msg: "{{item}}"
+    loop: "{{testlist|flatten(levels=1)}}"
+  - debug:
+      msg: "{{index}}---{{item}}"
+    loop: "{{testlist|flatten(levels=1)}}"
+    loop_control:
+     index_var: index
+  - debug: 
+     msg: "{{item.0}}--{{item.1}}--{{item.2}}"
+    with_together:
+     - "{{t1}}"
+     - "{{t2}}"
+     - "{{t3}}"
+  - debug: 
+     msg: "{{item.0}}--{{item.1}}--{{item.2}}"
+    loop: "{{ t1 | zip_longest(t2,t3,fillvalue='NOVALE') | list }}"
+  - debug: 
+     msg: "{{item.0}}--{{item.1}}--{{item.2}}"
+    loop: "{{ t1 | zip(t2,t3) | list }}"
+  - debug: 
+     msg: "{{item.0}}--{{item.1}}"
+    loop: "{{ t1 | product(t2) | list }}"
+  - debug:
+     msg: "{{item}}"
+    loop: "{{range(0,6,2)|list}}"
+  - debug:
+     msg: "{{item}}"
+    with_sequence: start=0 end=6 stride=2 format="number is %0.2f"
+  - debug:
+     msg: "{{t2|random}}"
+  - debug:
+      msg: "{{item.key}} -- {{item.value}}"
+    loop: "{{ users | dict2items }}"
+    vars:
+     users:
+      d: daisy
+      c: carol
+      a: alice
+      b: bob
+      e: ella
+  - debug:
+      msg: "{{item.0}} -- {{item.1}}"
+    loop: "{{ users | dictsort }}"
+    vars:
+     users:
+      d: daisy
+      c: carol
+      a: alice
+      b: bob
+      e: ella

@@ -1,0 +1,14 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - debug:
+     msg: "task1 not in block"
+  - block:
+     - debug:
+        msg: "task2 in block"
+     - debug:
+        msg: task3 in block
+    when: 2 > 1
+       

@@ -1,0 +1,16 @@
+something in test.j2...
+ 
+{%set testvar=123%}
+{% block test %}
+something in block test ---- {{testvar}}
+{% endblock %}
+ 
+{% for i in range(3) -%}
+ 
+{% block test1 scoped %}
+something in block test1 ---- {{i}}
+{% endblock %}
+ 
+{%- endfor %}
+ 
+something in test.j2...

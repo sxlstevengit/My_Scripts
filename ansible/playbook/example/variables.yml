@@ -1,0 +1,12 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars_files:
+  - vars/testvar.yml
+  tasks:
+  - debug:
+     msg: "{{ va1 }}"
+  - debug:
+     msg: "{{item}}"
+    with_items: "{{countlist}}"

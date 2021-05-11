@@ -1,0 +1,13 @@
+---
+- hosts: C
+  remote_user: root
+#  tags: http
+  tasks:
+  - name: install httpd package
+    yum: name=httpd state=installed
+    tags: package
+  - name: start httpd 
+    service: name=httpd state=started
+    tags: ['service','always']
+  - name: mkdir file
+    file: path=/tmp/haha1 state=touch

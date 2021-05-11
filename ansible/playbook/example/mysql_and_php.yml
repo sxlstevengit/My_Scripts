@@ -1,0 +1,6 @@
+- name: install mysql
+  debug:
+   msg: "installing mysql"
+- name: install php
+  debug:
+   msg: "installing php"

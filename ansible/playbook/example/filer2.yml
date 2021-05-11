@@ -1,0 +1,32 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: yes
+  vars:
+   va1: -1
+  tasks:
+  - debug:
+     msg: "{{8+('8'|int)}}"
+  - debug:
+     msg: "{{'a' | int(default=6)}}"
+  - debug:
+     msg: "{{'8' | float }}"
+  - debug:
+     msg: "{{'a' | float(8.88) }}"
+  - debug:
+     msg: "{{ va1 | abs }}"
+  - debug:
+     msg: "{{12.58|round}}"
+
+  - debug:
+     msg: "{{3.1415926 | round(5) }}"
+  - debug:
+     msg: "{{100 | random }}"
+  - debug:
+     msg: "{{10 | random(start=5)}}"
+  - debug:
+     msg: "{{15 | random(start=5,step=3)}}"
+  - debug:
+     msg: "{{25| random(step=5)}}"
+  - debug:
+     msg: "{{15|random(seed=(ansible_date_time.epoch))}}"

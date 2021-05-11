@@ -1,0 +1,16 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name: test dir
+    command: ls /haha
+    register: shellreturn
+    ignore_errors: true
+  - name: test 222
+    debug: 
+     msg: It's right
+    when: shellreturn.rc == 0
+  - debug:
+     msg: It's wrong
+    when: shellreturn.rc != 0

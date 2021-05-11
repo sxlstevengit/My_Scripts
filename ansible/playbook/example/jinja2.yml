@@ -1,0 +1,14 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars:
+   teststr: 'hello world'
+   testnum: 12321412
+   testlist: [1,2,3,4,5]
+   testlist1: ['aa','bb','cc','dd']
+   testdict: {'name':'bob','gender':'male'}
+  tasks:
+  - template:
+     src: 2.j2
+     dest: /tmp/2.j2.conf

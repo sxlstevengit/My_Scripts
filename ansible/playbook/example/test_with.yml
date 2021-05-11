@@ -1,0 +1,11 @@
+---
+- hosts: slave
+  remote_user: root
+  vars:
+    gg:
+      - one
+      - two
+  tasks:
+  - debug: msg="hi from {{ item }}"
+    with_items: 
+    - "{{ gg }}"

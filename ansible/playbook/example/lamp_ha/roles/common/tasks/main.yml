@@ -1,0 +1,31 @@
+---
+# This role contains common plays that will run on all hosts.
+- name: Install python bindings for selinux
+  yum: name={{ python_binds }} state=present
+#  with_items:
+#  - [libselinux-python,libsemanage-python]
+- name: Create the epel repository
+  copy: src=epel-aliyun.repo dest=/etc/yum.repos.d/
+- name: Create the gpg key for epel
+  copy: src=rpm-gpg-key-epel-7 dest=/etc/pki/rpm-gpg
+- name: install some nagios plugin.
+  yum: name={{ nagios_plugs }} state=present
+#  with_items:
+#  - [nagios-nrpe,nagios-plugins-swap,nagios-plugins-users,nagios-plugins-procs,nagios-plugins-load,nagios-plugins-disk]
+- name: install ntp service
+  yum: name=ntp state=present
+  tags: ntp
+- name: configurate the ntp config file
+  template: src=ntp.conf.temp dest=/etc/ntp.conf
+  tags: ntp
+  notify: restart ntp
+- name: start the ntp service
+  service: name=ntpd state=started enabled=true
+  tags: ntp
+#- name: add iptables template
+#  template: src=iptables.temp dest=/etc/sysconfig/iptables
+#  notify: restart iptables
+- name: test to see if selinux is running
+  command: getenforce
+  register: sestatus
+  changed_when: false

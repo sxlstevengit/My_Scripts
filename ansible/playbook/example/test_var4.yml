@@ -1,0 +1,15 @@
+---
+- hosts: C
+  remote_user: root
+  vars_prompt:
+  - name: "user_name"
+    prompt: "Enter user name"
+    private: no
+    encrypt: "sha512_crypt"
+    confirm: yes
+  - name: "user_passwd"
+    prompt: "Enter user password"
+  tasks:
+  - name: test vars
+    debug: 
+      msg: username is {{ user_name }}, password is {{ user_passwd }}

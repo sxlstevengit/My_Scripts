@@ -1,0 +1,9 @@
+---
+- hosts: C
+  remote_user: root
+  vars:
+   va1: test_def
+  tasks:
+  - name: "passing variables on the command line"
+    debug:
+     msg: this is {{ va1 }} and {{ countlist[0]}}

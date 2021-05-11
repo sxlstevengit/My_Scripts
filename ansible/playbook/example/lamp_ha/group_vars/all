@@ -1,0 +1,6 @@
+---
+# Variables here are applicable to all host group
+httpd_port: 80
+ntpserver: cn.ntp.org.cn
+nagios_plugs: [nagios-nrpe,nagios-plugins-swap,nagios-plugins-users,nagios-plugins-procs,nagios-plugins-load,nagios-plugins-disk]
+python_binds: [libselinux-python,libsemanage-python]

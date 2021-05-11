@@ -1,0 +1,11 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - debug:
+     msg: "{{ item }}"
+    with_indexed_items:
+    - a
+    - b
+    - c

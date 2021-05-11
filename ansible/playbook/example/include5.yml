@@ -1,0 +1,12 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks: 
+  - name: include file
+    include: A.yml
+    loop:
+    - 1
+    - 2
+    loop_control:
+     loop_var: out_item

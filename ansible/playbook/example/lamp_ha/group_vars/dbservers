@@ -1,0 +1,7 @@
+---
+#The variables is used by the dbservers group.
+mysqlservice: mysqld
+mysql_port: 3306
+dbuser: root
+dbname: mydb
+password: 123456 

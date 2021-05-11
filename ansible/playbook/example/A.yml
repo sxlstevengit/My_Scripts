@@ -1,0 +1,6 @@
+- debug:
+   msg: "{{out_item}}--{{item}}--task in A.yml"
+  loop:
+  - a
+  - b
+  - c

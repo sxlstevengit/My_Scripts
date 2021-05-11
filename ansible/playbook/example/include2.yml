@@ -1,0 +1,32 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - include: mysql_and_php.yml
+    tags: t1
+    when: 2 > 1
+  - name: install apache
+    debug: 
+     msg: "installing httpd"
+
+- hosts: B
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - include: mysql_and_php.yml
+  - name: install apache
+    debug:
+     msg: "installing httpd"
+  - name: touch file
+    file: path=/tmp/hello.txt state=touch
+    notify: test handlers
+  
+  handlers:
+  - name: test handlers
+    include: include_hand.yml 
+
+#- name: inclue the playbook
+#  include: lnmp.yml
+- name: include the playbook
+  import_playbook: lnmp.yml

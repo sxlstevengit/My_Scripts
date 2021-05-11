@@ -1,0 +1,4 @@
+- debug:
+    msg: "task1 in in3.yml"
+- debug:
+    msg: "task2 in in3.yml"

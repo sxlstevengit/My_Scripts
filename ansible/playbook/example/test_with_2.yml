@@ -1,0 +1,10 @@
+---
+- name: test loop
+  hosts: slave
+  remote_user: root
+  tasks:
+  - name: add user
+    user: name={{ item }} state=absent groups=nginx remove=yes
+    with_items:
+    - testuser1
+    - testuser2

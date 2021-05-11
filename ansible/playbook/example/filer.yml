@@ -1,0 +1,34 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: yes
+  vars:
+   va1: abakibKabABC
+   va2: " abc "
+   va3: '123456789'
+   va4: "1a2b,!@&$(*&@(%"
+  tasks:
+   - debug: 
+      msg: "{{ va1|upper }}"
+   - debug:
+      msg: "{{ va1|lower }}"
+   - debug:
+      msg: "{{ va1| capitalize }}"
+   - debug:
+      msg: "{{ va1|reverse }}"
+   - debug:
+      msg: "{{ va1|first }}"
+   - debug:
+      msg: "{{ va1|last }}"
+   - debug:
+      msg: "{{ va2| trim }}"
+   - debug:
+      msg: "{{ va2|center(width=30) }}"
+   - debug:
+      msg:  "{{ va1|length }}"
+   - debug:
+      msg: "{{ va4|list }}"
+   - debug:
+      msg: "{{va4|shuffle}}"
+   - debug:
+      msg: "{{ va4|shuffle(seed=(ansible_date_time.epoch)) }}"

@@ -1,0 +1,47 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars:
+   user:
+    alice: female
+    bob: male
+  tasks:
+  - debug:
+     msg: key is {{item.key}},value is {{item.value}}
+    with_dict: "{{user}}"
+  - debug:
+     msg: key is {{item.key}},value is {{item.value}}
+    loop: "{{lookup('dict',user)}}"
+  - debug:
+     msg: "{{lookup('file','/tmp/k1.txt','/tmp/k2.txt',wantlist=true)}}"
+  - debug:
+     msg: "{{query('file','/tmp/k1.txt','/tmp/k2.txt',wantlist=true)}}"
+  - debug:
+     msg: "{{lookup('env','PATH')}}"
+  - debug:
+     msg: "{{lookup('first_found',looklist)}}"
+    vars:
+     looklist:
+      - /tmp/k1.txt
+      - /tmp/k2.txt
+  - debug:
+     msg: "{{item}}"
+    with_first_found: "{{looklist}}"
+    vars:
+     looklist:
+      - /tmp/k3.txt
+      - /tmp/k4.txt
+      - skip: true
+  - debug:
+     msg: "{{lookup('ini','testa1 section=testA file=vars/test.ini')}}"
+  - debug:
+     msg: "{{lookup('ini','testa1a section=testA file=vars/test.ini default=not found')}}"
+  - debug:
+     msg: "{{lookup('ini','testa[12] section=testA file=vars/test.ini re=true')}}"
+  - debug:
+     msg: "{{lookup('ini','http.port type=properties file=vars/test.properties')}}"
+  - debug:
+     msg: "{{lookup('dig','www.baidu.com',wantlist=true)}}"
+  - debug:
+     msg: "{{lookup('password','/tmp/testpasswd')}}"

@@ -1,0 +1,6 @@
+---
+# define the tasks list
+- name: test network connect
+  ping: 
+- name: check /root directory
+  command: ls /root

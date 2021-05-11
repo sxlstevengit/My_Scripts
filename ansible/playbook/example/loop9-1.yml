@@ -1,0 +1,9 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - debug:
+     msg: "{{item}}"
+    with_fileglob:
+    - /root/*.???

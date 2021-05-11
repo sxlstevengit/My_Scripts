@@ -1,0 +1,11 @@
+---
+- hosts: C
+  remote_user: root
+  tasks:
+  - name: test shell
+    shell: "echo 1111 > /tmp/varshell.txt"
+    register: va1
+  - name: show va1
+    debug: 
+      msg: this is a {{ va1.cmd }}
+#     var: va1 

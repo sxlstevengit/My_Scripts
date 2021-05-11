@@ -1,0 +1,20 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name: exec command
+    command: ls /root
+    register: shellreturn
+  - debug:
+     msg: success
+    when: shellreturn is success
+  - debug:
+     msg: failure
+    when: shellreturn is failure
+  - debug:
+     msg: change
+    when: shellreturn is change
+  - debug:
+     msg: skip
+    when: shellreturn is skip

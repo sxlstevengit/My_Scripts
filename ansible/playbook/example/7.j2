@@ -1,0 +1,13 @@
+{#% import '6.j2' as funz with context %#}
+{% set ba='88888888' %}
+{#% from '6.j2' import fun1 as funz,fun2 as funx with context %#}
+{% import '6.j2' as funz with context %}
+{% import '6-1.j2' as funx with context %}
+hahaha
+{{ funz.fun1() }}
+
+{{ba}}
+lala
+{{ funz.fun2() }}
+
+{{ funx._fun3() }}

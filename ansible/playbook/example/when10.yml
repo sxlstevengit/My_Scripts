@@ -1,0 +1,16 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars:
+    a:
+    - 2
+    - 5
+    b: [1,2,3,4,5]
+  tasks:
+  - debug:
+      msg: "A is a subset of B"
+    when: a is subset(b)
+  - debug:
+      msg: "B is the parent set of A"
+    when: b is superset(a)

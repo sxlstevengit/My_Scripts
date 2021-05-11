@@ -1,0 +1,8 @@
+- hosts: A
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - include: mysql_and_php.yml
+  - name: install apache
+    debug:
+     msg: "installing httpd"

@@ -1,0 +1,14 @@
+---
+- hosts: C
+  remote_user: root
+  tasks: 
+  - name: task1
+    file: path=/tmp/t1 state=touch
+    tags: 
+    - t1
+  - name: task2
+    file: path=/tmp/t2 state=touch
+    tags: t2
+  - name: task3
+    file: path=/tmp/t3 state=touch
+    tags: [t3]

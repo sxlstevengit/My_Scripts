@@ -1,0 +1,6 @@
+- name: test tasks1
+  debug: 
+   msg: This is a test
+- name: test variable in roles
+  debug:
+   msg: "{{testvar}}"

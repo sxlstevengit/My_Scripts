@@ -1,0 +1,15 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name: simulate long running op (15 sec), wait for up to 45 sec, poll every 5 sec
+    command: sleep 15
+    async: 45
+    poll: 3
+    register: AA
+  - name: check the task state
+    async_status: jid={{ AA.ansible_job_id }}
+    register: job_result
+    until: job_result.finished
+    retries: 5

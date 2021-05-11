@@ -1,0 +1,32 @@
+---
+# This will install nagios
+
+- name: install nagios
+  yum: pkg={{ nagios_pack }} state=present
+  notify: restart httpd
+
+- name: create nagios config dir
+  file: path=/etc/nagios/ansible-managed state=directory
+
+- name: configure nagios
+  copy: src=nagios.cfg dest=/etc/nagios/nagios.cfg
+  notify: restart nagios
+
+- name: configure localhost monitoring
+  copy: src=localhost.cfg dest=/etc/nagios/objects/localhost.cfg
+  notify: restart nagios
+
+- name: configure nagios services
+  copy: src=ansible-managed-services.cfg dest=/etc/nagios/
+
+- name: create the nagios object files
+  template: src={{ item + ".j2" }}
+            dest=/etc/nagios/ansible-managed/{{ item }}
+  with_items:
+    - webservers.cfg
+    - dbservers.cfg
+    - lbservers.cfg
+  notify: restart nagios
+
+- name: start nagios
+  service: name=nagios state=started enabled=yes

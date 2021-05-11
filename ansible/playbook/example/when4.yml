@@ -1,0 +1,17 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars:
+   Fdir: /root/kk
+   Km: 
+  tasks:
+  - debug:
+     msg: "variable is defined"
+    when: Km is defined
+  - debug:
+     msg: "Variable is not defined"
+    when: Km is not defined
+  - debug:
+     msg: "Variable is defined but value is null"
+    when: Km is none

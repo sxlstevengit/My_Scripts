@@ -1,0 +1,6 @@
+- debug:
+    msg: "task1 of handlers"
+- debug:
+    msg: "task2 of handlers"
+- debug:
+    msg: "task3 of handlers"

@@ -1,0 +1,17 @@
+---
+- hosts: localhost
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - include_vars: 
+     dir: vars/
+     extensions: [yaml,yml,json,txt]
+#     files_matching: ".*.txt"
+     name: kk_var
+    register: return_va
+  - debug:
+     msg: "{{kk_var}}"
+  - debug:
+     msg: "{{kk_var.bb}}"
+  - debug:
+     msg: "{{return_va.ansible_included_var_files}}"

@@ -1,0 +1,10 @@
+---
+- hosts: C
+  remote_user: root
+  tasks:
+  - debug:
+      msg: "1"
+  - fail:
+      msg: "Interrupt running playbook"
+  - debug:
+      msg: "2"

@@ -1,0 +1,17 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars:
+   ha:
+    - "ls /tmp"
+    - "ls /root"
+  tasks:
+  - name: test loop
+    shell: "{{ item }}"
+    with_items: "{{ ha }}"
+    register: shellreturn
+  - name: show info
+    debug:
+     msg: this is {{ item.stdout }}
+    with_items: "{{ shellreturn.results }}"

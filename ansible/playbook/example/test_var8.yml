@@ -1,0 +1,24 @@
+---
+- hosts: h1
+  remote_user: root
+  vars:
+   va1: "hello world"
+  tasks:
+  - name: test register
+    shell: "echo 111111"
+    register: shellreturn
+  - name: test set_fact
+    set_fact:
+     vafact1: "{{ va1 }}"
+     vafact2: "{{ shellreturn.start }}"
+     vafact3: "Balabala xiaomoxian"
+  - debug:
+     msg: This is {{ vafact1 }} and {{ vafact2 }}
+
+- hosts: h1
+  remote_user: root
+  tasks:
+  - debug:
+     msg: This is {{ vafact3 }}
+  - debug:
+     msg: It's {{ va1 }}

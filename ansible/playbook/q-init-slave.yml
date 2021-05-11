@@ -1,0 +1,90 @@
+---
+- hosts: q-prod-slave-16
+  vars:
+    userid: opuser
+    uid: 2017
+    repo: opgit.abc.so
+    name: q-prod-slave-16
+    myip: 10.20.0.227
+  tasks:
+  - name: add {{ userid }} group
+    group: name={{ userid }} gid={{ uid }}
+     
+  - name: add  {{ userid  }} user
+    user: name={{ userid }} uid={{ uid }} group={{ userid }}
+     
+  - name: tranfile git config file
+    copy: src={{ item.src }} dest={{ item.dest }} mode=0400
+    with_items:
+      - { src: "/data/scripts/files/.gitconfig",dest: "~/.gitconfig" }
+      - { src: "/data/scripts/files/config_q",dest: "~/.ssh/config" }
+      - { src: "/data/scripts/keys/root_qcloud",dest: "~/.ssh/id_rsa" }
+      
+  - name: create {{ userid }} .ssh directory
+    file: path=/home/{{ userid }}/.ssh state=directory group={{ userid }} owner={{ userid }}
+
+  - name: tranfile git config file to {{ userid }}
+    copy: src=/data/scripts/files/.gitconfig dest=/home/{{ userid }}/ mode=0400 group={{ userid }} owner={{ userid }}
+    with_items:
+      - { src: "/data/scripts/files/.gitconfig",dest: "/home/{{ userid }}/" }
+      - { src: "/data/scripts/files/config_q",dest: "/home/{{ userid }}/.ssh/config" }
+      - { src: "/data/scripts/keys/root_qcloud",dest: "/home/{{ userid }}/.ssh/id_rsa" }
+
+  - name: set hostname
+    shell: hostname {{ name }}
+
+  - name: add host
+    template: src=/data/scripts/files/hosts.j2 dest=/etc/hosts
+    tags: update_hosts
+ 
+  - name: add custome nameserver
+    template: src=/data/scripts/files/q-resolv.conf.j2 dest=/etc/resolv.conf
+    tags: update_resolv
+
+  - name: mkdir code directory
+    file: path=/data/apps state=directory group={{ userid }} owner={{ userid }}
+  - name: mkdir etc directory
+    file: path=/data/etc state=directory group={{ userid }} owner={{ userid }}
+  - name: mkdir env_prod directory
+    file: path=/data/env_prod state=directory group={{ userid }} owner={{ userid }}
+  - name: mkdir servers_cfg directory
+    file: path=/data/servers_cfg state=directory group={{ userid }} owner={{ userid }}
+  - name: mkdir directory in /data
+    file: path=/data/{{ item }} state=directory group={{ userid }} owner={{ userid }}
+    with_items: [/data/maidian,/data/pos-ftp,/data/cms_merchant_data,/data/wechat_fans_place,/data/cms_merchant_data_src,/data/logs/webapps,/data/logs/php,/data/logs/apps,/data/upload,/data/images,/data/bossImg,/data/tpl,/data/share01,/data/easypark-service,/data/datapump/,/data/platform-redpack-server]
+
+  - name: modify the file /usr/local/mesos/etc/mesos/mesos-agent-env
+    shell: sed -i 's/10.20.0.38/{{ myip }}/g' /usr/local/mesos/etc/mesos/mesos-agent-env
+  - name: rsync /data/apps file from other slave
+    synchronize: src="/data/apps" dest="/data/apps" mode=pull
+    delegate_to: q-prod-slave-01
+  - name: rsync /data/etc file from other slave
+    synchronize: src="/data/etc" dest="/data/etc" mode=pull
+    delegate_to: q-prod-slave-01
+  - name: rsync /data/env_prod file from other slave
+    synchronize: src="/data/env_prod" dest="/data/env_prod" mode=pull
+    delegate_to: 10.20.0.132
+  - name: rsync /data/servers_cfg file from other slave
+    synchronize: src="/data/servers_cfg" dest="/data/servers_cfg" mode=pull
+    
+  - name: mount directory
+    mount: path=/data src=/dev/vdb1 fstype=ext4 opts=noatime,defaults state=mounted
+  - mount: path=/data/upload src=10.20.0.7:/upload fstype=nfs opts=noatime,defaults state=mounted
+  - mount: path=/data/images src=10.20.0.7:/images fstype=nfs opts=noatime,defaults state=mounted
+  - mount: path=/data/bossImg src=10.20.0.7:/images fstype=nfs opts=noatime,defaults state=mounted
+  - mount: path=/data/share01 src=10.20.0.7:/share01 fstype=nfs opts=noatime,defaults state=mounted
+  - mount: path=/data/tpl src=10.20.0.7:/tpl fstype=nfs opts=noatime,defaults state=mounted
+  - mount: path=/data/maidian src=10.20.0.7:/maidian fstype=nfs opts=noatime,defaults state=mounted
+  - mount: path=/data/cms_merchant_data src=10.20.0.7:/cms_merchant_data fstype=nfs opts=noatime,defaults state=mounted
+  - mount: path=/data/cms_merchant_data src=10.20.0.7:/cms_merchant_data fstype=nfs opts=noatime,defaults state=mounted
+  - mount: path=/data/pos-ftp src=10.20.0.7:/pos-ftp fstype=nfs opts=noatime,defaults state=mounted
+  - mount: path=/data/wechat_fans_place_src src=10.20.0.39:/data/wechat_fans_place_src fstype=nfs opts=noatime,defaults state=mounted
+  - mount: path=/data/logs/webapps src=10.20.3.15:/logs_php fstype=nfs opts=noatime,defaults state=mounted
+  - mount: path=/data/logs/php src=10.20.3.15:/fpm-log fstype=nfs opts=noatime,defaults state=mounted
+  - mount: path=/data/logs/apps src=10.20.3.10:/logs_java fstype=nfs opts=noatime,defaults state=mounted
+  - mount: path=/data/tmp src=10.20.3.14:/tmp fstype=nfs opts=noatime,defaults,nolock state=mounted
+
+  - name: start docker service
+    service: name=docker state=started
+  - name: start mesos-agent service
+    service: name=mesos-agent state=started

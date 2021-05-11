@@ -1,0 +1,14 @@
+driftfile /var/lib/ntp/drift
+restrict default nomodify notrap nopeer noquery
+restrict 127.0.0.1 
+restrict ::1
+server {{ ntpserver1 }} iburst
+server {{ ntpserver }} prefer
+minpoll 6
+includefile /etc/ntp/crypto/pw
+keys /etc/ntp/keys
+disable monitor
+# {{ ansible_hostname }}
+# {{  ansible_devices.sda.model }}
+# {{ ansible_eth0.ipv4.address }}
+

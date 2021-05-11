@@ -1,0 +1,10 @@
+all:
+ hosts:
+  C:
+   ansible_ssh_host: 192.168.10.77
+   ansible_ssh_port: 22
+   va1: "hello world"
+   va2: "hello baby" 
+   va3:
+    t1: 1.1
+    t2: 2.1

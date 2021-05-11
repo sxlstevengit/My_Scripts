@@ -1,0 +1,18 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars:
+   va1: 3
+   va2: 4
+   va3: 81
+  tasks:
+  - debug:
+     msg: It's a even
+    when: va2 is even
+  - debug:
+     msg: It's a odd
+    when: va1 is odd
+  - debug:
+     msg: It can be divided
+    when: va3 is divisibleby(9)

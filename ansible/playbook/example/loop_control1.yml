@@ -1,0 +1,20 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars:
+    users:
+      alice:
+        name: Alice Appleworth
+        gender: female
+        telephone: 123-456-7890
+      bob:
+        name: Bob Bananarama
+        gender: male
+        telephone: 987-654-3210
+  tasks:
+  - debug:
+      msg: "{{item.key}}"
+    loop: "{{users | dict2items}}"
+#    loop_control:
+#      label: "{{item.key}}"

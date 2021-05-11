@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - include_vars: 
+     file: vars/testvar.yml
+     name: kk_var
+  - debug:
+     msg: "{{kk_var}}"
+  - debug:
+     msg: "{{kk_var.va2}}"

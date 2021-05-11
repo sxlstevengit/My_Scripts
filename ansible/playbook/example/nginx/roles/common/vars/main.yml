@@ -1,0 +1,3 @@
+---
+# Variables listed here are applicabled to all host group
+ntpserver: ntp1.aliyun.com

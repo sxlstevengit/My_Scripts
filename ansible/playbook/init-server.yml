@@ -1,0 +1,116 @@
+---
+- hosts: bigops
+  remote_user: root
+  gather_facts: yes
+  vars:
+    userid: ryuser
+    uid: 2017
+    repo: opgit.rongyi.so
+    ser_name: bigops-server
+  tasks:
+   - name: create .ssh directory
+     file: path="~/.ssh" state=directory
+   - name: configure ssh connection
+     copy: src="./config/myansible.pub" dest=".ssh/authorized_keys" mode=0400
+
+   - name: add {{ userid }} group
+     group: name={{ userid }} gid={{ uid }}
+   - name: add  {{ userid  }} user
+     user: name={{ userid }} uid={{ uid }} group={{ userid }}
+
+   - name:  Replace the file of /etc/security/limits.conf and /etc/security/limits.d/20-nproc.conf
+     copy: src={{ item.src }} dest={{ item.dest }} force=yes
+     with_items:
+      - {src: "./config/limits.conf", dest: "/etc/security/limits.conf"}
+      - {src: "./config/20-nproc.conf", dest: "/etc/security/limits.d/20-nproc.conf"}
+
+   - name: disable Selinux
+     shell: if [[ $(getenforce) = "Disabled" ]]; then exit 0 ; else setenforce 0 ; fi  
+   - name: change Selinux config
+     lineinfile: 
+       path: /etc/selinux/config
+       regexp: '^SELINUX='
+       line: 'SELINUX=disabled'    
+   
+   - name: set hostname
+     hostname:
+       name: "{{ser_name}}" 
+ 
+   - name: backup origin yum repos
+     shell:
+       cmd: "mkdir backup; mv *.repo backup"
+       chdir: /etc/yum.repos.d
+       creates: /etc/yum.repos.d/backup
+   - name: config yum repo
+     get_url: url={{ item.url }} dest=/etc/yum.repos.d force=yes
+     when: ansible_distribution == "CentOS" and ansible_distribution_major_version == (item.os_version)
+     with_items:
+     - {url: "http://mirrors.aliyun.com/repo/Centos-6.repo",os_version: "6"}
+     - {url: "http://mirrors.aliyun.com/repo/Centos-7.repo",os_version: "7"}
+     - {url: "http://mirrors.aliyun.com/repo/Centos-8.repo",os_version: "8"}
+   - name : install common software   
+     yum: name={{ software }} state=present
+     vars:
+       software: [vim,zip,unzip,wget,telnet,lrzsz,git,make,cmake,ntpdate,ntp,ntsysv,gcc,gcc-c++,tree,nmap,nmap-ncat,dos2unix,net-tools,epel-release]
+
+   - name: install and sync time
+     block:
+       - name: install ntpdate
+         debug:
+           msg: 请安装ntpdate
+       - name: ntpdate to sync time
+         shell: |
+           ntpdate ntp.aliyun.com
+           hwclock -w
+
+   - name: save iptables rule
+     shell: |
+       iptables-save > /tmp/iptables.bak$(date +"%F-%T")
+   - name: Stop Firewall in linux7
+     systemd: name={{item}} state=stopped enabled=no
+     with_items: [firewalld]
+     when: ansible_distribution == "CentOS" and ( ansible_distribution_major_version == "7" or ansible_distribution_major_version == "8" )
+   - name: Stop Firewall in linux6
+     service: name={{item}} state=stopped enabled=no
+     with_items: [iptables,ip6tables]
+     when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "6"
+     #ignore_errors: true
+ 
+   - name: set sshd config
+     block:
+      - name: backup sshd config
+        shell: cp {{path}} {{path}}.backup
+        vars:
+         path: /etc/ssh/sshd_config
+
+      - name: disable root login
+        lineinfile:
+          path: "/etc/ssh/sshd_config"
+          line: "PermitRootLogin no"
+          insertafter: "^#PermitRootLogin"
+          regexp: "^PermitRootLogin"
+      - name: disable password auth
+        lineinfile:
+          path: "/etc/ssh/sshd_config"
+          line: "PasswordAuthentication no"
+          regexp: "^PasswordAuthentication yes"
+        notify: "restart sshd"
+
+   - name: configure /etc/sysctl.conf
+     copy: src="./config/sysctl.conf" dest="/etc/sysctl.conf"
+   - sysctl: name="net.ipv4.ip_forward" value=1 sysctl_file="/etc/sysctl.conf" reload=yes
+ 
+   - name: set /etc/profile
+     shell: |
+       cat >>/etc/profile <<EOF
+       export HISTTIMEFORMAT='%F %T '
+       ulimit -SHn 1024000
+       TZ='Asia/Shanghai'
+       export TZ
+   - name: set timezone 
+     file:  path=/etc/localtime src=/usr/share/zoneinfo/Asia/Shanghai state=link
+
+  handlers:
+    - name: "restart sshd"
+      service: name=sshd state=restarted
+

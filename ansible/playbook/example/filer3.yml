@@ -1,0 +1,73 @@
+---
+- hosts: C
+  remote_user: root
+  vars:
+   testvar7: [22,18,5,33,27,30]
+   testvar8: [1,[7,2,[15,9]],3,5]
+   testvar9: [1,'b',5]
+   testvar10: [1,'A','b',['QQ','wechat'],'CdEf']
+   testvar11: ['abc',1,3,'a',3,'1','abc']
+   testvar12: ['abc',2,'a','b','a']
+  tasks:
+   - debug:
+      msg: "{{testvar7|length}}"
+   - debug:
+      msg: "{{ testvar7|first}}"
+   - debug:
+      msg: "{{testvar7|last}}"
+   - debug:
+      msg: "{{testvar7|min}}"
+   - debug:
+      msg: "{{testvar7|max}}"
+   - debug:
+      msg: "{{testvar7|sort}}"
+   - debug:
+      msg: "{{testvar7|sort(reverse=true)}}"
+   - debug:
+      msg: "{{testvar7|sum}}"
+   - debug:
+      msg: "{{testvar8|flatten }}"
+   - debug:
+      msg: "{{testvar8|flatten(levels=1)}}"
+   - debug:
+      msg: "{{testvar8|flatten|max}}"
+   - debug:
+      msg: "{{testvar9|join}}"
+   - debug:
+      msg: "{{testvar9|join(',')}}"
+   - debug:
+      msg: "{{testvar9 | random}}"
+   - debug:
+      msg: "{{testvar9 | random(seed=(ansible_date_time.epoch))}}"
+   - debug:
+      msg: "{{testvar9 | shuffle}}"
+   - debug:
+      #随机打乱顺序列表中元素的顺序
+      #在随机打乱顺序时，将ansible_date_time.epoch的值设置为随机种子
+      #seed参数从ansible2.3版本开始可用
+      msg: "{{ testvar9 | shuffle(seed=(ansible_date_time.epoch)) }}"
+   - debug:
+       #将列表中的每个元素变成纯大写
+       msg: "{{ testvar10 | upper }}"
+   - debug:
+       #将列表中的每个元素变成纯小写
+       msg: "{{ testvar10 | lower }}"
+   - debug:
+       #去掉列表中重复的元素，重复的元素只留下一个
+       msg: "{{ testvar11 | unique }}"
+   - debug:
+       #将两个列表合并，重复的元素只留下一个
+       #也就是求两个列表的并集
+       msg: "{{ testvar11 | union(testvar12) }}"
+   - debug:
+       #取出两个列表的交集，重复的元素只留下一个
+       msg: "{{ testvar11 | intersect(testvar12) }}"
+   - debug:
+       #取出存在于testvar11列表中,但是不存在于testvar12列表中的元素
+       #去重后重复的元素只留下一个
+       #换句话说就是:两个列表的交集在列表1中的补集
+       msg: "{{ testvar11 | difference(testvar12) }}"
+   - debug:
+       #取出两个列表中各自独有的元素,重复的元素只留下一个
+       #即去除两个列表的交集，剩余的元素
+       msg: "{{ testvar11 | symmetric_difference(testvar12) }}" 

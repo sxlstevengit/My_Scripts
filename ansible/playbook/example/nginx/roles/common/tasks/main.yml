@@ -1,0 +1,13 @@
+---
+- name: Install ntp
+  yum: name=ntp state=present
+- name: Configure ntp file
+  template: src=ntp.conf.temp dest=/etc/ntp.conf
+  notify:
+  - restart ntp
+- name: Start the ntp service
+  service: name=ntpd state=started enabled=true
+- name: check if selinux is running
+  command: getenforce
+  register: sestatus
+  changed_when: false

@@ -1,0 +1,20 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name: '----------set testvar to 0'
+    set_fact:
+      testnum: 0
+  - debug:
+      msg: '-----include_tasks-----enter the in1.yml-----'
+  - include_tasks: in1.yml
+    when: testnum == 0
+ 
+  - name: '----------set testvar to 0'
+    set_fact:
+      testnum: 0
+  - debug:
+      msg: '-----import_tasks-----enter the in1.yml-----'
+  - import_tasks: in1.yml
+    when: testnum == 0

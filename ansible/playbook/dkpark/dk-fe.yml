@@ -1,0 +1,24 @@
+---
+- hosts: dk-ng
+  remote_user: root
+  gather_facts: no
+  vars:
+   fedir: /data/webapps/cmsfrontend/webroot/
+   software: [rsync]
+
+  tasks:  
+  - name: create dir 
+    shell: |
+      mkdir -p {{ fedir }}
+
+  - name: rsync install
+    yum: name={{ software }}
+
+  - name: configure ssh connection no password
+    block:
+     - copy: src="../config/myansible.pub" dest="/tmp/authorized_keys"
+     - file: path="~/.ssh" state=directory
+     - shell: cat /tmp/authorized_keys >> ~/.ssh/authorized_keys && rm -rf /tmp/authorized_keys
+
+  - name: sync fe file
+    synchronize: src=./fe/ dest={{fedir}}

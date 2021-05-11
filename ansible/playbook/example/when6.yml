@@ -1,0 +1,30 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars:
+   va1: /root/src
+   va2: /root/net.conf
+   va3: /root/1.conf
+   va4: /dev
+  tasks:
+  - name: test dir
+    debug:
+     msg: directory
+    when: va1 is directory
+  - name: test file
+    debug:
+     msg: file
+    when: va2 is file
+  - name: test link
+    debug:
+     msg: link
+    when: va3 is link
+  - name: test mount
+    debug:
+     msg: mount
+    when: va4 is mount
+  - name: test path
+    debug:
+     msg: path
+    when: va1 is exists

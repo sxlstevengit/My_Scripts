@@ -1,0 +1,20 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - include_vars:
+     file: "vars/cdn.yml"
+     name: testvar
+  - debug:
+     msg: "{{testvar}}"
+  - debug:
+     msg: "{{item.1.logUrl}}"
+    with_subelements:
+    - "{{testvar.logs}}"
+    - files
+  - debug:
+     msg: "{{testvar|json_query('logs[*].files[*].logUrl')}}"
+  - debug:
+      msg: "{{item}}"
+    with_items: "{{ testvar | json_query('logs[*].files[*].logUrl') }}"

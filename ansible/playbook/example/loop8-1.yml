@@ -1,0 +1,18 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars:
+   users:
+    alice:
+     name: Alice Appleworth
+     gender: female
+     telephone: 123-456-7890
+    bob:
+     name: Bob Bandakjf
+     gender: male
+     telephone: 13918224807
+  tasks:
+  - debug: 
+     msg: User {{item.key}} is {{item.value.name }}; gender:{{item.value.gender}};telephone:{{item.value.telephone}}
+    with_dict: "{{users}}"

@@ -1,0 +1,24 @@
+---
+- name: play1,gather facts of B
+  hosts: B
+  remote_user: root
+  gather_facts: no
+  vars:
+   vaa1: "my name is vaa1 in play1's vars"
+  tasks:
+  - shell: "echo register val in play1"
+    register: shellreturn
+  - debug: 
+     var: vaa1
+  - set_fact:
+     vaa1: "My name is vaa1 in play1's mode set_fact"
+
+- name: Play2,get facts of B when operating on C
+  hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks: 
+   - debug: 
+      msg: this is {{ hostvars.B.shellreturn.start}}
+   - debug: 
+      msg: this is {{ hostvars.B.vaa1 }}

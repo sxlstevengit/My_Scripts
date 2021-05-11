@@ -1,0 +1,12 @@
+---
+test:
+  users:
+  - name: tom
+    age: 18
+    hobby:
+    - Skateboard
+    - VideoGame
+  - name: jerry
+    age: 20
+    hobby:
+    - Music

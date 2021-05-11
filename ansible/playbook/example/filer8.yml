@@ -1,0 +1,19 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - include_vars: file="vars/person.yml"
+      name=testvar
+  - debug: 
+      msg: "{{testvar}}"
+  - debug:
+      msg: "{{testvar|json_query('test.users[*].hobby[*]')}}"
+  - debug:
+      msg: "{{testvar|json_query('test.users[?name==`tom`].hobby[*]')}}"
+  - debug:
+      msg: "{{testvar|json_query(haha)}}"
+    vars:
+      haha: "test.users[?name=='tom'].age"
+  - debug:
+      msg: "{{testvar|json_query('test.users[*].{u1:name,u2:age}')}}"

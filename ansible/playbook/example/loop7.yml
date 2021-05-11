@@ -1,0 +1,11 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - debug:
+     msg: "{{ item }}"
+#    with_sequence:
+#     start=10 end=2 stride=-1 format="number is %0.2f"
+#      count=5
+    with_random_choice: [1,2,3,4,5]

@@ -1,0 +1,18 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars:
+    testvar1: 1
+    testvar2: "1"
+    testvar3: 00.20
+  tasks:
+  - debug:
+      msg: "This variable is number"
+    when: testvar1 is number
+  - debug:
+      msg: "This variable is a number"
+    when: testvar2 is number
+  - debug:
+      msg: "This variable is a number"
+    when: testvar3 is number

@@ -1,0 +1,13 @@
+---
+- hosts: C
+  remote_user: root
+  vars:
+    ver: 7.4.1708
+    ver1: 7.4.1707
+  tasks:
+  - debug:
+      msg: "This message can be displayed when the ver is greater than ver1"
+    when: ver is version(ver1,">")
+  - debug:
+      msg: "system version {{ansible_distribution_version}} greater than 7.3"
+    when: ansible_distribution_version is version("7.3","gt")

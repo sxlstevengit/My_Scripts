@@ -1,0 +1,9 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+   - name: test make directory
+     file: path=/tmp/test{{ item }} state=absent
+     with_sequence:
+       start=2 end=10 stride=2

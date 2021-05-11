@@ -1,0 +1,12 @@
+---
+- hosts: slave
+  remote_user: root
+  vars:
+    filename: /etc/profile
+  tasks:
+   - name: "shell basename"
+     shell: echo {{ filename|basename }} >>/tmp/testbasename.txt
+   - name: "shell dirname"
+     shell: echo {{ filename|dirname }} >>/tmp/testbasename.txt 
+   - name: "shell variable test"
+     shell: echo {{ ansible_local.preferences.general. open_files }} >>/tmp/testbasename.txt 

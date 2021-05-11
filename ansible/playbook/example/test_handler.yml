@@ -1,0 +1,26 @@
+---
+- hosts: C
+  remote_user: root
+  tasks:
+  - name: Modify the configuration for nginx
+    lineinfile:
+      path=/etc/nginx/nginx.conf
+      regexp="listen(.*) 9099(.*)"
+      line="listen\1 9098\2"
+      backrefs=yes
+      backup=yes
+    notify: group handler
+  - meta: flush_handlers
+  - name: make testfile
+    file: path=/tmp/testfile state=directory
+    notify: ht 
+   
+  handlers:
+   - name: restart nginx
+     listen: group handler
+     service: name=nginx state=restarted
+   - name: haha
+     listen: group handler
+     file: path=/tmp/haha.txt state=touch
+   - name: ht
+     file: path=/tmp/testfile/ht.txt state=touch

@@ -1,0 +1,10 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - debug:
+     msg: "{{item}}"
+    with_file:
+    - 1.txt
+    - 2.txt

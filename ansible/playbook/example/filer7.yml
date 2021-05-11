@@ -1,0 +1,12 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - include_vars:
+     file: "vars/simple.yml"
+     name: testvar
+  - debug:
+     msg: "{{testvar|json_query('users[*].name')}}"
+  - debug:
+     msg: "{{testvar|json_query('users[*].age')}}"

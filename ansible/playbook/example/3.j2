@@ -1,0 +1,124 @@
+jinja2 test 123
+
+#测试三元操作符
+{{'a' if 2>1 else 'b'}}
+
+#在模板中定义变量，同时在playbook中和模板中定义变量，模板中优先级高。
+{% set testnum=9 %}
+{{ testnum }}
+
+#if 控制语句测试
+{% if testnum > 5 %}
+{{ testnum }} is greater than 5
+{% else %}
+{{ testnum }} is less than 5
+{% endif %}
+
+# for 控制语句
+{% for i in [1,2,3,4,5] -%}
+{{ i~' ' }}
+{%- endfor %}
+
+#for dict
+{% for i,j in {'name':'bob','age':20}.iteritems() %}
+{{ i ~':'~ j }}
+{% endfor %}
+
+#for loop-index
+{% for i in ['a','b','c','d','e'] %}
+{{ i~' '~loop.cycle }}
+{% endfor %}
+
+#for range
+{% for i in range(5) %}
+{{i}}
+{% endfor %}
+
+{% for i in range(1,10,2) if i>10 %}
+{{i~'---'~loop.index}}
+{% else %}
+no one is greater than 10
+{% endfor %}
+
+{% for i in range(1,10,2) %}
+{% if i>3 %}
+{{i~'---'~loop.index}}
+{% endif %}
+{% endfor %}
+
+
+{% for i in list1 %}
+{{i~'---'~loop.index}}
+{% else %}
+no one 
+{% endfor %}
+
+
+#for dictionary
+{% set dic1={'name':'bob','son':{'name':'tom','son':{'name':'jerry'}}} %}
+
+{% for i,j in dic1.iteritems() recursive %}
+{% if i == 'name' %}
+  {% set fathername=j %}
+{% endif %}
+
+{% if i == 'son' %}
+  {{ fathername~"'s son is "~ j.name~loop.depth }}
+  {{ loop(j.iteritems()) }}
+{% endif %}
+{% endfor %}
+
+
+#for list
+
+{% set userlist=['Naruto','Kakashi','Sasuke','Sakura','Lee','Gaara','Itachi']  %}
+ 
+{% for u in userlist %}
+{{ u ~'----'~ loop.cycle('team1','team2','team3')}}
+{%endfor%}
+
+#for continue
+{% for i in [7,1,5,3,9] %}
+  {% if loop.index is even %}
+  {% continue %}
+  {% endif %}
+{{ i~'----'~loop.index }}
+{% endfor %}
+
+#for break
+{% for i in [7,1,5,3,9] %}
+  {% if loop.index > 3 %}
+  {% break %}
+  {% endif %}
+{{ i~'----'~loop.index }}
+{% endfor %}
+
+
+# for modify list
+{% set lista=[5,8] %}
+{% for i in lista %}
+{{ i }}
+{% endfor %}
+
+{%do lista.append(9) %}
+
+{% for i in lista %}
+{{ i }}
+{% endfor %}
+
+
+#转义
+{{ '{{' }}
+{{ '}}' }}
+{{ '{{ test string }}' }}
+{{ '{% test string %}' }}
+{{ '{# test string #}' }}
+
+#大段转义
+{% raw %}
+  {{ test }}
+  {% test %}
+  {# test #}
+  {% if %}
+  {% for %}
+{% endraw %}

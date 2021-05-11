@@ -1,0 +1,11 @@
+---
+# This role installs httpd
+- name: Install httpd
+  yum: name={{ base_httpd }} state=present
+
+- name: Configure selinux to all httpd to connect to remote databases 
+  seboolean: name=httpd_can_network_connect_db state=true persistent=yes
+  when: sestatus.rc != 0
+
+- name: http service state
+  service: name=httpd state=started enabled=yes

@@ -1,0 +1,10 @@
+---
+- name: test with loop
+  hosts: slave
+  remote_user: root
+  tasks:
+  - name: hehe
+    command: echo {{ item }}
+    with_items:
+    - one
+    - two

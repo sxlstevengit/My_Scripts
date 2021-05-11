@@ -1,0 +1,5 @@
+Va1: "hello world"
+Va2: "Hello nimei"
+nginx:
+  conf80: /tmp/80.conf
+  conf88: /tmp/88.conf

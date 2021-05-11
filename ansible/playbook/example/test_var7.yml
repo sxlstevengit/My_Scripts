@@ -1,0 +1,10 @@
+---
+- hosts: C
+  remote_user: root
+  tasks:
+  - name: test set_fact  
+    set_fact:
+      va1: "hello world"
+  - name: test debug 
+    debug:
+     msg: this is {{ va1 }}

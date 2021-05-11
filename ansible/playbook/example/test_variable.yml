@@ -1,0 +1,16 @@
+---
+- name: Test variable regedit
+  hosts: slave
+  remote_user: root
+  tasks:
+  - name: first of all
+    shell: pwd
+    register: foo_result
+    ignore_errors: false
+  - name: second
+    shell: echo "Hello World" >>/tmp/test_variable.txt
+    when: foo_result.rc == 1
+#  - name: thind
+  - shell: echo {{ foo_result }} >>/tmp/test_variable.txt
+  - name: four
+    shell: echo {{ foo_result.stdout_lines }} >>/tmp/test_variable.txt

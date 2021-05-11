@@ -1,0 +1,106 @@
+# This is the default ansible 'hosts' file.
+#
+# It should live in /etc/ansible/hosts
+#
+#   - Comments begin with the '#' character
+#   - Blank lines are ignored
+#   - Groups of hosts are delimited by [header] elements
+#   - You can enter hostnames or ip addresses
+#   - A hostname/ip can be a member of multiple groups
+
+# Ex 1: Ungrouped hosts, specify before any group headers.
+
+## green.example.com
+## blue.example.com
+## 192.168.100.1
+## 192.168.100.10
+
+# Ex 2: A collection of hosts belonging to the 'webservers' group
+
+## [webservers]
+## alpha.example.org
+## beta.example.org
+## 192.168.1.100
+## 192.168.1.110
+
+# If you have multiple hosts following a pattern you can specify
+# them like this:
+
+## www[001:006].example.com
+
+# Ex 3: A collection of database servers in the 'dbservers' group
+
+## [dbservers]
+## 
+## db01.intranet.mydomain.net
+## db02.intranet.mydomain.net
+## 10.25.1.56
+## 10.25.1.57
+
+# Here's another example of host ranges, this time there are no
+# leading 0s:
+#
+## db-[99:101]-node.example.com
+[mylinux]
+192.168.10.73
+192.168.10.74
+192.168.10.77
+
+[namelinux]
+cdh-master.rongyi.com
+cdh-slave.rongyi.com
+cdh-slave2.rongyi.com
+
+[special]
+192.168.10.192
+
+[slave]
+192.168.10.74
+192.168.10.77
+
+[test]
+jumper ansible_ssh_port=22 ansible_ssh_host=192.168.10.74
+cdh-slave2.rongyi.com
+
+[haha]
+host1 ansible_ssh_host=192.168.10.74 http_port=80 maxRequestsPerChild=800
+host2 ansible_ssh_host=192.168.10.77 http_port=80 maxRequestsPerChild=900
+[haha:vars]
+ntp_server=cn.ntp.org.cn
+http_port=80
+
+[testgroup:children]
+mylinux
+slave
+[testgroup:vars]
+some_server=nginx.com
+
+[C]
+h1 ansible_ssh_host=192.168.10.77
+[B]
+h2 ansible_ssh_host=192.168.10.74
+[A]
+h3 ansible_ssh_host=192.168.10.73
+
+[sky]
+sky1 ansible_ssh_host=192.168.1.150 ansible_ssh_user=root ansible_ssh_pass="abc.com"
+sky2 ansible_ssh_host=192.168.1.151 ansible_ssh_user=root ansible_ssh_pass="abc.com"
+sky3 ansible_ssh_host=192.168.1.152 ansible_ssh_user=root ansible_ssh_pass="abc.com"
+sky4 ansible_ssh_host=192.168.10.164 ansible_ssh_user=root ansible_ssh_pass="abc.com"
+
+[Bigops_Server]
+#bigops ansible_ssh_host=192.168.10.78 ansible_ssh_user=root ansible_ssh_pass="abc.com"
+bigops ansible_ssh_host=192.168.10.78
+
+[dkpark]
+dk-ng ansible_ssh_host=10.10.51.2 ansible_ssh_user=root ansible_ssh_pass="abcd123"
+dk-mysql ansible_ssh_host=10.10.51.3 ansible_ssh_user=root ansible_ssh_pass="abcd123"
+dk-java ansible_ssh_host=10.10.51.4 ansible_ssh_user=root ansible_ssh_pass="abcd123"
+[dkpark:vars]
+ansible_ssh_pass="abcd123"
+
+
+
+
+[windows]
+10.1.10.157 ansible_ssh_user=admin ansible_ssh_pass=abcd123 ansible_connection=winrm ansible_ssh_port=5985 ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore

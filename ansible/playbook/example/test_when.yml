@@ -1,0 +1,16 @@
+---
+- hosts: slave
+  remote_user: root
+  tasks:
+  - name: "chose the os type"
+    shell: echo "Hello AAA">>/tmp/test_when.txt
+    when: ansible_os_family == "RedHat"  
+  - command: uname
+    register: result
+    ignore_errors: True
+  - command: df -TH
+    when: result is failed
+  - command: ls
+    when: result is success
+  - command: date
+    when: result is skipped

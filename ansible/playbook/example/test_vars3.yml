@@ -1,0 +1,22 @@
+---
+- hosts: C
+  remote_user: root
+  vars_prompt:
+   - name: "your_name"
+     prompt: "What's your name?"
+     private: no
+   - name: "your_age"
+     prompt: "How old are you?"
+   - name: "solution"
+     prompt: "Please choose the solution what you want"
+     A: solutionA\n
+     B: solutionB\n
+     C: solutionC\n
+     D: solutionD\n
+#     private: no
+     default: A
+  tasks:
+  - name: output vars infomation
+    debug:
+#     msg: Your name is {{ your_name }}, your age is {{ your_age }}
+     msg: Your choose {{ solution }}

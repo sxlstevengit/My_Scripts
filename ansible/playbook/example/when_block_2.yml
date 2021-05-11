@@ -1,0 +1,9 @@
+---
+- hosts: C 
+  remote_user: root
+  tasks:
+  - block:
+      - shell: 'ls /ooo'
+    rescue:
+      - debug:
+          msg: 'I caught an error'

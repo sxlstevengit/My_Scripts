@@ -1,0 +1,7 @@
+---
+- hosts: C
+  remote_user: root
+  tasks:
+  - debug:
+      msg: "System release is not centos7"
+    when: not ansible_distribution == "CentOS" 

@@ -1,0 +1,11 @@
+---
+- hosts: C
+  remote_user: root
+  vars:
+   Var1: "Hello world"
+   Var2: "Hello NiMei"
+  tasks:
+  - name: test debug
+    debug: 
+#     msg: "{{ Var1 }}"
+     var: Var2

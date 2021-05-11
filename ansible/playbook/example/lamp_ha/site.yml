@@ -1,0 +1,30 @@
+---
+- hosts: all
+  roles:
+  - common
+- hosts: dbservers
+  user: root
+  roles:
+  - db
+  tags:
+  - db 
+- hosts: webservers
+  user: root
+  roles:
+  - base-apache
+  - web
+  tags:
+  - web
+- hosts: lbservers
+  user: root
+  roles:
+  - haproxy
+  tags:
+  - lb
+- hosts: monitors
+  user: root
+  roles: 
+#  - base-apache
+  - nagios
+  tags:
+  - monitor

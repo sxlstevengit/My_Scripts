@@ -1,0 +1,13 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - debug: 
+     msg: "{{item}}"
+    loop: 
+    - A
+    - B
+  - debug: 
+     msg: "{{item}}"
+    with_list: [A,B]

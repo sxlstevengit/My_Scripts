@@ -1,0 +1,10 @@
+---
+- hosts: bigops
+  remote_user: root
+  gather_facts: no
+  tasks:  
+  - name: set /etc/profile
+    shell: |
+      cat >>/etc/profile <<EOF
+      export HISTTIMEFORMAT='%F %T '
+      ulimit -SHn 1024000

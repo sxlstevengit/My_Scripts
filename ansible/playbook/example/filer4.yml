@@ -1,0 +1,13 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  vars:
+   va1: ''
+  tasks:
+  - debug:
+     msg: "{{va2|default('hello')}}"
+  - debug:
+     msg: "{{va1 | default('babay',boolean=true)}}"
+  - debug:
+     msg: "{{va2 | mandatory}}"

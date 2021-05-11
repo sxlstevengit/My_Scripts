@@ -1,0 +1,13 @@
+---
+- hosts: B
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - debug:
+     msg: "{{ item }}"
+    with_together: #[a,b,c] 
+    - [a,b,c]
+    - [1,2]
+#    with_items:
+#    - { test1: a1,test2: a2 }
+#    - { test1: a3,test4: a4 }

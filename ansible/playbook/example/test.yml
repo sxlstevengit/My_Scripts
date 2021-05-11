@@ -1,0 +1,13 @@
+---
+- hosts: slave
+  remote_user: root
+  tasks: 
+  - include: tasks/foo.yml
+
+- hosts: test
+  remote_user: root
+  tasks:
+  - name: check file stat
+    stat: path=/etc/sysctl.conf
+  - name: create a direcroty
+    file: path=/tmp/nihao state=directory owner=root group=root mode=755

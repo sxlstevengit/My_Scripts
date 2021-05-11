@@ -1,0 +1,16 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - debug: 
+     msg: "{{ item }}"
+    with_nested:
+     - [a,b,c]
+     - [test1,test2]
+#   - name: mkdir my directory
+#     file: path=/tmp/kk/{{ item.0 }}/{{ item.1 }}
+#           state=directory
+#     with_cartesian:
+#      - [a,b,c]
+#      - [test1,test2]

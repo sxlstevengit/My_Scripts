@@ -1,0 +1,20 @@
+---
+- hosts: B
+  remote_user: root
+  gather_facts: no
+  vars:
+   ha: 
+    - "ls /root"
+    - "ls /etc/ssh"
+  tasks:
+  - name: test1
+    shell: "{{ item }}"
+    with_items: "{{ ha }}"
+    register: shellreturn
+  
+  - name: show return data
+    debug: 
+     msg: 
+      "{% for i in shellreturn.results %}
+       {{ i.stdout }}
+       {% endfor %}"

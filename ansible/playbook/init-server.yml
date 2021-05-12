@@ -98,7 +98,7 @@
 
    - name: configure /etc/sysctl.conf
      copy: src="./config/sysctl.conf" dest="/etc/sysctl.conf"
-   - sysctl: name="net.ipv4.ip_forward" value=1 sysctl_file="/etc/sysctl.conf" reload=yes
+   - sysctl: name="net.ipv4.ip_forward" value=1 sysctl_file="/etc/sysctl.conf" sysctl_set=yes reload=yes
  
    - name: set /etc/profile
      shell: |

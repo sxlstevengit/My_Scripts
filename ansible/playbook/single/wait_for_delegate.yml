@@ -1,0 +1,17 @@
+---
+- hosts: bigops
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name: restart jar app on one java server
+    file: path=/tmp/steven_h2.txt state=touch
+    delegate_to: h2
+    when: env == "prod"
+
+  - name: Wait for 15s
+    wait_for: timeout=15
+
+  - name: restart jar app on one java server
+    file: path=/tmp/steven_h1.txt state=touch
+    delegate_to: h1
+    when: env == "prod"

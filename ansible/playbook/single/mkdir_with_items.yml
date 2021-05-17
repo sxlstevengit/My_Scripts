@@ -1,0 +1,17 @@
+---
+- hosts: bigops
+  remote_user: root
+  gather_facts: no
+  vars:
+    dkbackend: "/data/servers/dkpark-backend"
+    dkjob: "/data/servers/dkpark-job"
+    dkmock: "/data/servers/dkpark-mock"
+    dkservice: "/data/servers/dkpark-service"
+  tasks:
+  - name: create dir
+    file: path={{ item }} state=directory
+    with_items: 
+      - "{{ dkbackend }}"
+      - "{{ dkjob }}"
+      - "{{ dkmock }}"
+      - "{{ dkservice }}"

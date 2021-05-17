@@ -1,0 +1,10 @@
+---
+- hosts: "{{ dkserver }}"
+  remote_user: root
+  gather_facts: no
+  vars:
+   INFO: "hello world"
+  tasks:
+  - name: print message
+    debug:
+      msg: "{{ INFO }}"

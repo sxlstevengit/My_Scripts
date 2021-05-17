@@ -1,0 +1,63 @@
+---
+- hosts: "{{ dkserver }}"
+  remote_user: root
+  gather_facts: no
+  vars:
+    dkbackend: "/data/servers/dkpark-backend"
+    dkjob: "/data/servers/dkpark-job"
+    dkmock: "/data/servers/dkpark-mock"
+    dkservice: "/data/servers/dkpark-service"
+    etc_dir: "/data/etc/projects"
+    downfile_dir: "/data/dkpark/download_file"
+    dksource_dir: "/dkpark_source/fe"
+  tasks:  
+  - name: create dir 
+    file: path={{ item }} state=directory
+    with_items:
+      - "{{ dkbackend }}"
+      - "{{ dkjob }}"
+      - "{{ dkmock }}"
+      - "{{ dkservice }}"
+      - "{{ etc_dir }}"
+      - "{{ downfile_dir }}"
+      - "{{ dksource_dir}}"
+
+  #- name: configure ssh connection by sshkey
+  #  block:
+  #   - copy: src="../config/myansible.pub" dest="/tmp/authorized_keys" 
+  #   - file: path="~/.ssh" state=directory
+  #   - shell: cat /tmp/authorized_keys >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys && rm -rf /tmp/authorized_keys
+
+  #- name: rsync install
+  #  yum: name={{software}}
+  #  vars:
+  #    software: [rsync]
+
+  - name: sync file
+    copy: src=./java/{{item}}.sh dest=/data/servers/{{item}}/ mode=u+x
+    with_items: [dkpark-backend,dkpark-job,dkpark-mock,dkpark-service]
+  
+  - name: copy java file
+    copy: src=./java/{{ item }}-0.0.1-SNAPSHOT.jar dest=/data/servers/{{item}}/{{item}}.jar 
+    with_items: [dkpark-backend,dkpark-job,dkpark-mock,dkpark-service]
+
+  - name: restart the jar app
+    script: ./scripts/restart_dkapp.sh {{ item }}
+    with_items: [dkpark-backend,dkpark-job,dkpark-mock,dkpark-service]
+    when: env == "test" or env == "stag"
+
+  - name: restart jar app on one java server
+    script: ./scripts/restart_dkapp.sh {{ item }}
+    with_items: [dkpark-backend,dkpark-job,dkpark-mock,dkpark-service]
+    delegate_to: dk-java-prod-01
+    when: env == "prod"
+
+  - name: Wait for 30s
+    wait_for: timeout=30
+    when: env == "prod"
+
+  - name: restart jar app on one java server
+    script: ./scripts/restart_dkapp.sh {{ item }}
+    with_items: [dkpark-backend,dkpark-job,dkpark-mock,dkpark-service]
+    delegate_to: dk-java-prod-02
+    when: env == "prod"

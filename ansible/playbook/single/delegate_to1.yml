@@ -1,0 +1,13 @@
+---
+- hosts: 192.168.10.74
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name: mkdir 
+    file: path=/etc/ansible/new_playbook/single  state=directory
+  - name: Transfer file from Server74 to Server77
+    synchronize:
+      src: /etc/ansible/new_playbook/single/
+      dest: /etc/ansible/new_playbook/single/
+      mode: pull
+    delegate_to: 192.168.10.77

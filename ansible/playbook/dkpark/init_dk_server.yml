@@ -1,0 +1,15 @@
+---
+- hosts: dkpark 
+  remote_user: root
+  gather_facts: no
+  tasks:  
+  - name: configure ssh connection by sshkey
+    block:
+     - copy: src="../config/myansible.pub" dest="/tmp/authorized_keys" 
+     - file: path="~/.ssh" state=directory
+     - shell: cat /tmp/authorized_keys >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys && rm -rf /tmp/authorized_keys
+
+  - name: rsync install
+    yum: name={{software}}
+    vars:
+      software: [rsync]

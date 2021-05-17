@@ -14,13 +14,13 @@
       - name: disable root login
         lineinfile:
           path: "/etc/ssh/sshd_config"
-          line: "PermitRootLogin no
+          line: "PermitRootLogin yes"
           insertafter: "^#PermitRootLogin"
           regexp: "^PermitRootLogin"
       - name: disable password auth
         lineinfile: 
           path: "/etc/ssh/sshd_config"
-          line: "PasswordAuthentication no"
+          line: "PasswordAuthentication yes"
           regexp: "^PasswordAuthentication yes"
         notify: "restart sshd"
   handlers:

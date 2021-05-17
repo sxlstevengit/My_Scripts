@@ -79,6 +79,8 @@ some_server=nginx.com
 h1 ansible_ssh_host=192.168.10.77
 [B]
 h2 ansible_ssh_host=192.168.10.74
+[B:vars]
+env=dev
 [A]
 h3 ansible_ssh_host=192.168.10.73
 
@@ -90,17 +92,52 @@ sky4 ansible_ssh_host=192.168.10.164 ansible_ssh_user=root ansible_ssh_pass="abc
 
 [Bigops_Server]
 #bigops ansible_ssh_host=192.168.10.78 ansible_ssh_user=root ansible_ssh_pass="abc.com"
-bigops ansible_ssh_host=192.168.10.78
+bigops ansible_ssh_host=192.168.10.78 
 
-[dkpark]
-dk-ng ansible_ssh_host=10.10.51.2 ansible_ssh_user=root ansible_ssh_pass="abcd123"
-dk-mysql ansible_ssh_host=10.10.51.3 ansible_ssh_user=root ansible_ssh_pass="abcd123"
-dk-java ansible_ssh_host=10.10.51.4 ansible_ssh_user=root ansible_ssh_pass="abcd123"
+[dkpark-test]
+dk-ng-test ansible_ssh_host=10.199.51.2 ansible_ssh_user=root
+dk-mysql-test ansible_ssh_host=10.199.51.3 ansible_ssh_user=root
+dk-java-test ansible_ssh_host=10.199.51.4 ansible_ssh_user=root env=test
+
+[dkpark-stag]
+dk-ng-stag ansible_ssh_host=10.199.52.2 ansible_ssh_user=root
+dk-mysql-stag ansible_ssh_host=10.199.52.4 ansible_ssh_user=root
+dk-java-stag ansible_ssh_host=10.199.52.3 ansible_ssh_user=root env=stag
+
+
+[dk-ng-prod]
+dk-ng-prod-01 ansible_ssh_host=10.199.50.2 ansible_ssh_user=root
+dk-ng-prod-02 ansible_ssh_host=10.199.50.3 ansible_ssh_user=root
+
+[dk-java-prod]
+dk-java-prod-01 ansible_ssh_host=10.199.50.4 ansible_ssh_user=root
+dk-java-prod-02 ansible_ssh_host=10.199.50.5 ansible_ssh_user=root
+
+#组名和主机名可以相同，但是会警告，所以不建议相同。
+[dk-redis-prod]
+dk-redis-prod-01 ansible_ssh_host=10.199.50.6 ansible_ssh_user=root
+
+[dk-zk-prod]
+dk-zk-prod-01 ansible_ssh_host=10.199.50.6 ansible_ssh_user=root
+
+[dk-mysql-prod]
+dk-mysql-prod-01 ansible_ssh_host=10.199.50.7 ansible_ssh_user=root
+
+[dkpark-prod:children]
+dk-ng-prod
+dk-java-prod
+dk-redis-prod
+dk-zk-prod
+dk-mysql-prod
+[dkpark:children]
+dkpark-test
+dkpark-stag
+dkpark-prod
 [dkpark:vars]
-ansible_ssh_pass="abcd123"
+#ansible_ssh_pass="abc.com"
 
 
 
 
 [windows]
-10.1.10.157 ansible_ssh_user=admin ansible_ssh_pass=abcd123 ansible_connection=winrm ansible_ssh_port=5985 ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore
+10.1.10.157 ansible_ssh_user=admin ansible_ssh_pass=abc.com ansible_connection=winrm ansible_ssh_port=5985 ansible_winrm_transport=ntlm ansible_winrm_server_cert_validation=ignore

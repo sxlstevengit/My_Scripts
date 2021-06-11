@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name: init git repo on localhost run once
+    shell: cd {{local_java_dir}}/v4/java/{{item}} && git init && git remote add origin {{gitlab_url}}/{{item}}.git && git checkout -b v4 && touch v4.md && git add v4.md && git commit -m "add v4" && git push origin v4
+    with_items: [dkpark-backend,dkpark-job,dkpark-mock,dkpark-service]
+    delegate_to: localhost
+    ignore_errors: true

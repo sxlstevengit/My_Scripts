@@ -1,0 +1,112 @@
+﻿---
+- hosts: "{{ ryserver }}"
+  remote_user: root
+  gather_facts: no
+  vars:
+    delegate_host: 192.168.10.74
+    local_php_dir: /etc/ansible/new_playbook/dkparkv3
+    php_dir: /data/webapps
+    php_dev_giturl: http://git.internal.abc.com/php/{{project}}.git
+    php_repo_url: ssh://git@gitlab.abc.com:2222/rongyi/{{project}}.git
+    backup_dir: /data/deploy/ry
+  tasks:
+  - name: create php dir 
+    file: path={{ php_dir }} state=directory
+
+  - name: This block run in the stag environment, include push php to opgitlab, backup file on reposerver, sync php from reposerver to realserver
+    block:
+    - name: pull phpfile from devgitlab
+      git: repo={{php_dev_giturl}} dest={{local_php_dir}}/php/{{project}} clone=yes accept_hostkey=no force=yes version={{branch}}
+      delegate_to: localhost
+
+    - name:  sync phpfile from phpdir to archivedir 
+      shell: rsync -av {{ local_php_dir }}/php/{{project}}/ {{local_php_dir}}/ry/v4/php/{{project}}/ --exclude=.git --exclude=*.md
+      delegate_to: localhost
+
+    - name: push phpfile to opgitlab
+      shell: cd {{local_php_dir}}/ry/v4/php/{{project}} && git checkout v4 && git add -A && git commit -m "v4 `date +%F-%T`" && git push origin v4
+      delegate_to: localhost
+      ignore_errors: true
+
+    - name:  backup file on reposerver
+      git: repo={{php_repo_url}} dest={{backup_dir}}/v4/php/{{project}} accept_hostkey=no force=yes version=v4
+      delegate_to: "{{ delegate_host }}"
+
+    - name:  sync phpfile from reposerver to realserver
+      synchronize: 
+        src: "{{ backup_dir }}/v4/php/{{project}}/"
+        dest: "{{php_dir}}/{{project}}/"
+        rsync_opts:  
+         - "--exclude=.git" 
+         - "--exclude=*.md"
+      delegate_to: "{{ delegate_host }}"
+    when: env == "stag" and rolls is undefined
+
+  - name: This block run in the prod environment, include push php to opgitlab, backup file on reposerver, sync php from reposerver to realserver
+    block:
+    - name: pull phpfile from devgitlab
+      git: repo={{php_dev_giturl}} dest={{local_php_dir}}/php/{{project}} clone=yes accept_hostkey=no force=yes version={{branch}}
+      delegate_to: localhost
+
+    - name:  sync phpfile from phpdir to archivedir 
+      shell: rsync -av {{ local_php_dir }}/php/{{project}}/ {{local_php_dir}}/ry/v8/php/{{project}}/ --exclude=.git --exclude=*.md
+      delegate_to: localhost
+
+    - name: push phpfile to opgitlab
+      shell: cd {{local_php_dir}}/ry/v8/php/{{project}} && git checkout v8 && git add -A && git commit -m "v8 `date +%F-%T`" && git push origin v8
+      delegate_to: localhost
+      ignore_errors: true
+
+    - name:  backup file on reposerver
+      git: repo={{php_repo_url}} dest={{backup_dir}}/v8/php/{{project}} accept_hostkey=no force=yes version=v8
+      delegate_to: "{{ delegate_host }}"
+
+    - name:  sync phpfile from reposerver to realserver
+      synchronize: 
+        src: "{{ backup_dir }}/v8/php/{{project}}/"
+        dest: "{{php_dir}}/{{project}}/"
+        rsync_opts:  
+         - "--exclude=.git" 
+         - "--exclude=*.md"
+      delegate_to: "{{ delegate_host }}"
+    when: env == "prod" and rolls is undefined
+
+  - name: roll back v4
+    block:
+    - name: roll back version,rolls=1表示回退到上一个版本，依次类推
+      shell: cd {{ local_php_dir }}/ry/v4/php/{{project}} && git checkout v4 && git reset --hard HEAD~{{rolls}} && git push origin v4 -f
+      delegate_to: localhost
+
+    - name:  git checkout on reposerver
+      git: repo={{php_repo_url}} dest={{backup_dir}}/v4/php/{{project}} accept_hostkey=no force=yes version=v4
+      delegate_to: "{{ delegate_host }}"
+
+    - name:  sync php from reposerver to realserver
+      synchronize: 
+        src: "{{ backup_dir }}/v4/php/{{project}}/"
+        dest: "{{php_dir}}/{{project}}/"
+        rsync_opts:
+         - "--exclude=.git"
+         - "--exclude=*.md"
+      delegate_to: "{{ delegate_host }}"
+    when: env == "stag" and rolls is defined
+
+  - name: roll back v8
+    block:
+    - name: roll back version,rolls=1表示回退到上一个版本，依次类推
+      shell: cd {{ local_php_dir }}/ry/v8/php/{{project}} && git checkout v8 && git reset --hard HEAD~{{rolls}} && git push origin v8 -f
+      delegate_to: localhost
+
+    - name:  git checkout on reposerver
+      git: repo={{php_repo_url}} dest={{backup_dir}}/v8/php/{{project}} accept_hostkey=no force=yes version=v8
+      delegate_to: "{{ delegate_host }}"
+
+    - name:  sync php from reposerver to realserver
+      synchronize: 
+        src: "{{ backup_dir }}/v8/php/{{project}}/"
+        dest: "{{php_dir}}/{{project}}/"
+        rsync_opts:
+         - "--exclude=.git"
+         - "--exclude=*.md"
+      delegate_to: "{{ delegate_host }}"
+    when: env == "stag" and rolls is defined

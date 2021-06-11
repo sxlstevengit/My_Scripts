@@ -1,0 +1,122 @@
+﻿---
+- hosts: "{{ ryserver }}"
+  remote_user: root
+  gather_facts: no
+  vars:
+    delegate_host: 192.168.10.74
+    local_java_dir: "{{ file_path }}"
+    dest_dir: "/etc/ansible/new_playbook/dkparkv3"
+    file_name: "{{ filename }}"
+    module_name: "{{ module }}"
+    module_dir: "/data/apps/{{ module }}"
+    backup_dir: "/data/deploy/ry"
+    gitlab_url: "ssh://git@gitlab.abc.com:2222/rongyi/{{module}}.git"
+    marathon_v4: "http://10.X.X.X:8080"
+    marathon_v8: "http://10.X.X.X:8080"
+  tasks:  
+  - name: create dir 
+    file: path={{ item }} state=directory
+    with_items:
+      - "{{ module_dir }}"
+
+  - name: This block run in the stag environment. rsync java file on localhost and push file to opgilt and backup java file and rsync file to realserver
+    block:
+    - name: copy java file to v4 directory on localhost
+      copy: src={{local_java_dir}}/{{filename}} dest={{dest_dir}}/ry/v4/java/{{module}}/{{module}}.jar 
+      delegate_to: localhost
+
+    - name: push java to opgitlab
+      shell: cd {{ dest_dir }}/ry/v4/java/{{module}} && git checkout v4 && git add -A && git commit -m "v4 `date +%F-%T`" && git push origin v4
+      delegate_to: localhost
+      ignore_errors: true
+
+    - name:  backup file on reposerver
+      git: repo={{ gitlab_url }} dest={{backup_dir}}/v4/java/{{module}} accept_hostkey=no force=yes version=v4
+      delegate_to: "{{ delegate_host }}"
+
+    - name:  sync java from reposerver to realserver
+      synchronize: 
+        src: "{{ backup_dir }}/v4/java/{{module}}/"
+        dest: "{{module_dir}}/" 
+        rsync_opts: 
+         - "--exclude=.git"
+         - "--exclude=*.md"
+      delegate_to: "{{ delegate_host }}"
+      #notify: "restartapp_v4"
+    when: env == "stag" and rolls is undefined
+
+  - name: This block run in the prod environment. rsync java file on localhost and push file to opgilt and backup java file and rsync file to realserver
+    block:
+    - name: copy java file to v8 directory on localhost
+      copy: src={{local_java_dir}}/{{filename}} dest={{dest_dir}}/ry/v8/java/{{module}}/{{module}}.jar 
+      delegate_to: localhost
+
+    - name: push java to opgitlab
+      shell: cd {{ dest_dir }}/ry/v8/java/{{module}} && git checkout v8 && git add -A && git commit -m "v8 `date +%F-%T`" && git push origin v8
+      delegate_to: localhost
+      ignore_errors: true
+
+    - name:  backup file on reposerver
+      git: repo={{ gitlab_url }} dest={{backup_dir}}/v8/java/{{module}} accept_hostkey=no force=yes version=v8
+      delegate_to: "{{ delegate_host }}"
+
+    - name:  sync java from reposerver to realserver
+      synchronize: 
+        src: "{{ backup_dir }}/v8/java/{{module}}/"
+        dest: "{{module_dir}}/" 
+        rsync_opts: 
+         - "--exclude=.git"
+         - "--exclude=*.md"
+      delegate_to: "{{ delegate_host }}"
+      notify: "restartapp_v8"
+    when: env == "prod" and rolls is undefined
+
+  - name: roll back v4
+    block:
+    - name: roll back version,rolls=1表示回退到上一个版本，依次类推
+      shell: cd {{ dest_dir}}/ry/v4/java/{{module}} && git checkout v4 && git reset --hard HEAD~{{rolls}} && git push origin v4 -f
+      delegate_to: localhost
+
+    - name:  git checkout on reposerver
+      git: repo={{gitlab_url}} dest={{backup_dir}}/v4/java/{{module}} accept_hostkey=no force=yes version=v4
+      delegate_to: "{{ delegate_host }}"
+
+    - name:  sync java from reposerver to realserver
+      synchronize: 
+        src: "{{ backup_dir }}/v4/java/{{module}}/"
+        dest: "{{module_dir}}/"
+        rsync_opts:
+         - "--exclude=.git"
+         - "--exclude=*.md"
+      delegate_to: "{{ delegate_host }}"
+      #notify: "restartapp_v4"
+    when: env == "stag" and rolls is defined
+
+  - name: roll back v8
+    block:
+    - name: roll back version,rolls=1表示回退到上一个版本，依次类推
+      shell: cd {{ dest_dir}}/ry/v8/java/{{module}} && git checkout v8 && git reset --hard HEAD~{{rolls}} && git push origin v8 -f
+      delegate_to: localhost
+
+    - name:  git checkout on reposerver
+      git: repo={{gitlab_url}} dest={{backup_dir}}/v8/java/{{module}} accept_hostkey=no force=yes version=v8
+      delegate_to: "{{ delegate_host }}"
+
+    - name:  sync java from reposerver to realserver
+      synchronize: 
+        src: "{{ backup_dir }}/v8/java/{{module}}/"
+        dest: "{{module_dir}}/"
+        rsync_opts:
+         - "--exclude=.git"
+         - "--exclude=*.md"
+      delegate_to: "{{ delegate_host }}"
+      notify: "restartapp_v8"
+    when: env == "prod" and rolls is defined
+
+  handlers:
+  - name: restartapp_v4
+    shell: if [[ ${filename} =~ war$ ]];then curl -X POST {{marathon_v4}}/v2/apps/java/{{module}}/restart;else curl -X POST {{marathon_v4}}/v2/apps/jar/{{module}}/restart;fi
+    delegate_to: localhost
+  - name: restartapp_v8
+    shell: if [[ ${filename} =~ war$ ]];then curl -X POST {{marathon_v8}}/v2/apps/java/{{module}}/restart;else curl -X POST {{marathon_v8}}/v2/apps/jar/{{module}}/restart;fi
+    delegate_to: localhost

@@ -1,0 +1,8 @@
+---
+- hosts: dkpark-test
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name: rsync two dir on localhost
+    debug: msg="hello world"
+    run_once: true

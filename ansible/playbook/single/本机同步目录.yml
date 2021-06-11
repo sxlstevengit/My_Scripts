@@ -1,0 +1,8 @@
+---
+- hosts: C
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name: rsync two dir on localhost
+    copy: src=/etc/ansible/new_playbook/dkparkv2/test/etc/ dest=/tmp/etc/
+    delegate_to: localhost

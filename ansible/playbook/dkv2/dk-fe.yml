@@ -1,0 +1,151 @@
+﻿---
+- hosts: "{{ dkserver }}"
+  remote_user: root
+  gather_facts: no
+  vars:
+   delegate_host: 192.168.10.74
+   local_fe_dir: /etc/ansible/new_playbook/dkparkv3/dikong
+   fedir: /data/webapps/cmsfrontend/webroot/
+   software: [rsync]
+   repo_url: ssh://git@gitlab.abc.com:2222/rongyi/{{project}}.git
+   backup_dir: /data/deploy/dikong
+  tasks:  
+  - name: create dir 
+    file: path={{ fedir }} state=directory
+ 
+  - name: This block run in the test environment, include push fe to opgitlab, backup file on reposerver, sync fe from reposerver to realserver  
+    block:
+    - name: push file to opgitlab
+      shell: cd {{local_fe_dir}}/test/fe/{{project}}/ && git checkout test && git add -A && git commit -m "test `date +%F-%T`" && git push origin test
+      delegate_to: localhost
+      ignore_errors: true
+   
+    # git模块要clone分支时，可以用version指定分支名称
+    - name: backup file on reposerver
+      git: repo={{ repo_url }} dest={{ backup_dir }}/test/fe/{{project}} accept_hostkey=no force=yes version=test
+      delegate_to: "{{ delegate_host }}"
+
+    - name: sync fe from reposerver to realserver
+      synchronize: 
+        src: "{{ backup_dir }}/test/fe/{{project}}/webroot/"
+        dest: "{{fedir}}"
+        rsync_opts:
+          - "--exclude=.git"
+          - "--exclude=*.md"
+      delegate_to: "{{ delegate_host }}"
+    when: env == "test" and rolls is undefined
+
+  - name: This block run in the stag environment, include push fe to opgitlab, backup file on reposerver, sync fe from reposerver to realserver  
+    block:
+    - name: push file to opgitlab
+      shell: cd {{ local_fe_dir }}/v4/fe/{{project}} && git checkout v4 && git add -A && git commit -m "v4 `date +%F-%T`" && git push origin v4
+      delegate_to: localhost
+      ignore_errors: true
+   
+    # git模块要clone分支时，可以用version指定分支名称
+    - name: backup file on reposerver
+      git: repo={{ repo_url }} dest={{ backup_dir }}/v4/fe/{{project}} accept_hostkey=no force=yes version=v4
+      delegate_to: "{{ delegate_host }}"
+    
+    # rsync_opts可以添加rsync选项，比如排除文件或者目录
+    - name: sync fe from reposerver to realserver
+      synchronize: 
+        src: "{{ backup_dir }}/v4/fe/{{project}}/webroot/"
+        dest: "{{fedir}}"
+        rsync_opts: 
+          # 如果采用--exclude-from后面需要指定一个文件，注意此文件的位置。如果带有delegate_to，那么此文件要位于指派的主机上【位于执行任务的主机上】。
+          #- "--exclude-from=/tmp/.rsync-filter"
+          - "--exclude=.git"
+          - "--exclude=*.git"
+      register: myresults
+      delegate_to: "{{ delegate_host }}"
+
+    - name: Print stdout
+      debug: var=myresults.stdout_lines 
+      with_items: myresults.results
+    when: env == "stag" and rolls is undefined 
+
+  - name: This block run in the prod environment, include push fe to opgitlab, backup file on reposerver, sync fe from reposerver to realserver  
+    block:
+    - name: push file to opgitlab
+      shell: cd {{ local_fe_dir }}/v8/fe/{{project}} && git checkout v8 && git add -A && git commit -m "v8 `date +%F-%T`" && git push origin v8
+      delegate_to: localhost
+      #ignore_errors: true
+   
+    # git模块要clone分支时，可以用version指定分支名称
+    - name: backup file on reposerver
+      git: repo={{ repo_url }} dest={{ backup_dir }}/v8/fe/{{project}} accept_hostkey=no force=yes version=v8
+      delegate_to: "{{ delegate_host }}"
+    
+    # rsync_opts可以添加rsync选项，比如排除文件或者目录
+    - name: sync fe from reposerver to realserver
+      synchronize: 
+        src: "{{ backup_dir }}/v8/fe/{{project}}/webroot/"
+        dest: "{{fedir}}"
+        rsync_opts: 
+          # 如果采用--exclude-from后面需要指定一个文件，注意此文件的位置。如果带有delegate_to，那么此文件要位于指派的主机上【位于执行任务的主机上】。
+          #- "--exclude-from=/tmp/.rsync-filter"
+          - "--exclude=.git"
+          - "--exclude=*.git"
+      delegate_to: "{{ delegate_host }}"
+    when: env == "prod" and rolls is undefined
+
+  - name: roll back test
+    block:
+    - name: roll back version,rolls=1表示回退到上一个版本，依次类推
+      shell: cd {{local_fe_dir}}/test/fe/{{project}} && git checkout test && git reset --hard HEAD~{{rolls}} && git push origin test -f
+      delegate_to: localhost
+
+    - name:  git checkout on reposerver
+      git: repo={{repo_url}} dest={{backup_dir}}/test/fe/{{project}} accept_hostkey=no force=yes version=test
+      delegate_to: "{{ delegate_host }}"
+
+    - name:  sync fe from reposerver to realserver
+      synchronize: 
+        src: "{{ backup_dir }}/test/fe/{{project}}/webroot/"
+        dest: "{{fedir}}/"
+        rsync_opts:
+         - "--exclude=.git"
+         - "--exclude=*.md"
+      delegate_to: "{{ delegate_host }}"
+    when: env == "test" and rolls is defined
+
+  - name: roll back v4
+    block:
+    - name: roll back version,rolls=1表示回退到上一个版本，依次类推
+      shell: cd {{local_fe_dir}}/v4/fe/{{project}} && git checkout v4 && git reset --hard HEAD~{{rolls}} && git push origin v4 -f
+      delegate_to: localhost
+
+    - name:  git checkout on reposerver
+      git: repo={{repo_url}} dest={{backup_dir}}/v4/fe/{{project}} accept_hostkey=no force=yes version=v4
+      delegate_to: "{{ delegate_host }}"
+
+    - name:  sync fe from reposerver to realserver
+      synchronize: 
+        src: "{{ backup_dir }}/v4/fe/{{project}}/webroot/"
+        dest: "{{fedir}}/"
+        rsync_opts:
+         - "--exclude=.git"
+         - "--exclude=*.md"
+      delegate_to: "{{ delegate_host }}"
+    when: env == "stag" and rolls is defined
+
+  - name: roll back v8
+    block:
+    - name: roll back version,rolls=1表示回退到上一个版本，依次类推
+      shell: cd {{local_fe_dir}}/v8/fe/{{project}} && git checkout v8 && git reset --hard HEAD~{{rolls}} && git push origin v8 -f
+      delegate_to: localhost
+
+    - name:  git checkout on reposerver
+      git: repo={{repo_url}} dest={{backup_dir}}/v8/fe/{{project}} accept_hostkey=no force=yes version=v8
+      delegate_to: "{{ delegate_host }}"
+
+    - name:  sync fe from reposerver to realserver
+      synchronize: 
+        src: "{{ backup_dir }}/v8/fe/{{project}}/webroot/"
+        dest: "{{fedir}}/"
+        rsync_opts:
+         - "--exclude=.git"
+         - "--exclude=*.md"
+      delegate_to: "{{ delegate_host }}"
+    when: env == "prod" and rolls is defined

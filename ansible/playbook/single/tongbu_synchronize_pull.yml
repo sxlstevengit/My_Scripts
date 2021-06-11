@@ -1,0 +1,13 @@
+---
+- hosts: ryops
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name: rsync file of etc
+    synchronize: src={{ srcdir }} dest={{destdir}} mode=pull
+    delegate_to: localhost
+    vars:
+     srcdir: /data/deploy/ry/v4/php/cms_weixin
+     destdir: /etc/ansible/new_playbook/dkparkv3/php/
+     
+

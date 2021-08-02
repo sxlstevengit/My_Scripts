@@ -1,0 +1,97 @@
+---
+- hosts: bi-server
+  remote_user: root
+  gather_facts: no
+  vars:
+    userid: opuser
+    uid: 2017
+    ser_name: bigops-server
+  tasks:
+   - name: create .ssh directory
+     file: path="~/.ssh" state=directory
+   - name: configure ssh connection
+     copy: src="./config/myansible.pub" dest=".ssh/authorized_keys" mode=0400
+   - name: set hostname
+     block:
+       - copy: content={{ inventory_hostname }} dest=/etc/hostname
+       - hostname:
+           name: "{{ inventory_hostname }}" 
+   - name:  添加域名解析
+     template: src="./config/hosts.j2.all" dest=/etc/hosts
+
+   - name: check whether the firewalld is running
+     shell: pgrep firewalld
+     register: fw_result
+     ignore_errors: True
+   - name: Stop Firewall in linux7
+     systemd: name={{item}} state=stopped enabled=no
+     with_items: [firewalld]
+     when: fw_result is success
+
+   - name: disable Selinux
+     shell: if [[ $(getenforce) = "Disabled" ]]; then exit 0 ; else setenforce 0 ; fi  
+     register: se_result
+     ignore_errors: True
+   - name: change Selinux config
+     lineinfile: 
+       path: /etc/selinux/config
+       regexp: '^SELINUX='
+       line: 'SELINUX=disabled'    
+     when: se_result.rc != 0
+   
+   - name: Check whether the ntpdate is installed
+     shell: hash ntpdate
+     register: ntp_result
+     ignore_errors: True
+   - name: install and sync time
+     block:
+       - name: yum ntpdate
+         yum: name=ntpdate state=present
+       - name: ntpdate to sync time
+         shell: |
+           ntpdate ntp.aliyun.com
+           hwclock -w
+       - name: add ntpdate to crontab
+         cron: name='sync time' minute=0 hour=23 job='ntpdate ntp.aliyun.com >/dev/null 2>&1'
+     when: ntp_result is failed
+
+   - name: Create a new primary partition
+     parted:
+       device: "{{ item }}"
+       number: 1
+       flags: [ lvm ]
+       label: gpt
+       state: present
+       part_end: 100%
+     with_items:
+       - "/dev/vdb"
+       - "/dev/vdc"
+       - "/dev/vdd"
+       - "/dev/vde"
+    
+   - name: create a volume group
+     lvg: 
+       vg: bi_vg
+       pvs: /dev/vdb1,/dev/vdc1,/dev/vdd1,/dev/vde1
+
+   - name: Create a logical volume
+     lvol: 
+       vg: bi_vg
+       lv: bi_lv
+       size: 100%VG
+       resizefs: true
+       force: yes
+       state: present
+
+   - name: Create a xfs filesystem
+     filesystem:
+       fstype: xfs
+       dev: /dev/bi_vg/bi_lv
+
+   - name: Mount disk
+     mount:
+       path: /data
+       src: /dev/bi_vg/bi_lv
+       fstype: xfs
+       opts: noatime
+       state: mounted

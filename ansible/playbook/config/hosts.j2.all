@@ -1,0 +1,10 @@
+127.0.0.1  localhost  localhost.localdomain  {{ inventory_hostname }}
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+
+10.120.4.2  q-bi-01
+10.120.4.3  q-bi-02
+10.120.4.6  q-bi-03
+10.120.4.12 q-bi-04
+10.120.4.14 q-bi-05
+10.120.4.15 q-bi-06
+10.120.4.16 q-bi-07

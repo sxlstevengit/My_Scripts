@@ -1,0 +1,17 @@
+[Unit]
+Description=node_exporter
+After=network.target
+
+[Service]
+User=root
+Group=root
+Type=simple
+ExecStart=/usr/local/node_exporter/node_exporter --collector.textfile.directory="/usr/local/node_exporter/textdir" --collector.mountstats --web.listen-address=0.0.0.0:9110
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+RestartSec=5
+Restart=always
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

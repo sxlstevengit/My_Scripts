@@ -1,0 +1,91 @@
+java包一般有war包和jar包两种格式，那么此处只介绍jar包如何写成systemctl服务启动。
+
+介绍两种方法：
+以下两种方法，都会遇到两个问题： 
+    变量问题： 第一种方法: 变量直接写shell脚本里面；第二种方法：找一个文件专门做为变量文件。
+    java命令找不到: 第一种方法： 通过export JAVA_HOME=/usr/local/java/jdk1.8.0_171 写入脚本。
+                   第二种方法： 直接用绝对路径：  因为可执行命令必须用绝对路径，不然会报
+                   Executable path is not absolute。 而且即使写入环境变量也不能引用到，只针对第二种方法。
+
+
+
+第一种： 带有shell启动脚本的方式.  附dkpark-backend.sh脚本
+
+[Unit]
+Description=dkpark-backend
+After=network.target
+
+[Service]
+User=root
+Group=root
+#Type=simple
+Type=forking
+ExecStart=/data/servers/dkpark-backend/dkpark-backend.sh
+ExecReload=/usr/bin/kill -9 $MAINPID
+Restart=on-failure
+KillMode=process
+RestartSec=5s
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+
+
+第二种： 直接命令启动的方式,如果需要执行创建目录等命令时，可以用ExecStartPre.
+
+[Unit]
+Description=dkpark-backend
+After=network.target
+
+[Service]
+User=root
+Group=root
+Type=simple
+#Type=forking
+EnvironmentFile=-/data/servers/dkpark-backend/dkpark-backend.env
+ExecStartPre=/usr/bin/sh -c 'if [ ! -e $LOGPATH ];then mkdir -p $LOGPATH; fi'
+ExecStartPre=/usr/bin/sh -c 'cd ${SERDIR}; if [ ! -L logs ];then ln -s  $LOGPATH logs; fi'
+ExecStart=/usr/bin/sh -c 'exec /usr/local/java/jdk1.8.0_171/bin/java $JVM -jar /data/servers/${APPNAME}/${APPNAME}.jar >>${LOGPATH}/${APPNAME}.log 2>&1'
+ExecStop=/usr/bin/kill -9 $MAINPID
+Restart=on-failure
+KillMode=process
+RestartSec=5s
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+
+[Install]
+WantedBy=multi-user.target
+
+第二种还会遇到一个问题，就是日志文件输出到文件的问题？
+# 注意：对于systemd 236或更高版本，您还可以使用StandardOutput = file：/ some / path， 也就是说版本低于236的直接指定文件，则不起作用。 像centos7不起作用。
+
+==========================================
+
+解决办法1： 
+通过：syslog
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=dkpark-backend
+
+并配置syslog配置文件
+[root@bigops-server dkpark-backend]# cat /etc/rsyslog.d/dkpark-backend.conf 
+if $programname == 'dkpark-backend' then /data/logs/apps/dkpark-backend/dkpark-backend.log
+& stop
+
+重启rsyslog
+systemctl restart rsyslog.service
+
+
+解决办法2：
+ExecStart=/usr/bin/sh -c 'exec /usr/local/java/jdk1.8.0_171/bin/java $JVM -jar /data/servers/${APPNAME}/${APPNAME}.jar >>${LOGPATH}/${APPNAME}.log 2>&1'
+
+==========================================
+
+
+
+
+# 对于systemd 236或更高版本,可以直接输出到文件，如下：
+StandardOutput=append:/var/log1.log
+StandardError=append:/var/log2.log

@@ -1,0 +1,45 @@
+﻿[Unit]
+# 服务描述
+Description=elasticsearch
+# 依赖顺序，在什么服务之后启动
+After=network.target
+
+[Service]
+# 开启此服务的core dump： 核心转储”，它是进程运行时突然崩溃的那一刻的内存快照
+LimitCORE=infinity
+# 设置服务的文件打开数
+LimitNOFILE=655360
+LimitNPROC=655360
+# 用户和组
+User=es
+Group=es
+#设置环境变量
+Environment="abc=100"
+#引用环境变量文件，等号后面的橫线"-"表示没有此文件时，也不会报错。
+EnvironmentFile=-/usr/local/mesos/etc/mesos/mesos-agent-env
+# 进程PID文件
+PIDFile=/var/run/es.pid
+# 服务启动前执行命令
+ExecStartPre=/bin/sh -c 'if [ ! -d ${LOG_PATH} ]; then mkdir ${LOG_PATH}; fi'
+# 启动命令
+ExecStart=/opt/es/bin/elasticsearch
+# 重截配置命令
+ExecReload=/bin/kill -s HUP $MAINPID
+# 关闭命令
+ExecStop=/bin/kill -s TERM $MAINPID
+#设置标准输入输出和标准错误输出的目的地。 StandardOutput=null是将程序业务日志输出到空，也可以指定文件，或者交给journal处理；inherit表示继承。
+# 注意：对于systemd 236或更高版本，您还可以使用StandardOutput = file：/ some / path， 也就是说版本低于236的直接指定文件，则不起作用。 像centos7不起作用。
+StandardInput=null
+StandardOutput=journal
+StandardError=inherit
+
+# 重启间隔时间
+RestartSec=5
+# 任何进行重启
+Restart=always
+# 设置服务私有的TMP目录
+PrivateTmp=true
+
+[Install]
+# 在什么级别下安装此服务
+WantedBy=multi-user.target

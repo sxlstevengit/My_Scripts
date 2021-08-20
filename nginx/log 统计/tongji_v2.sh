@@ -1,6 +1,6 @@
-#!/bin/bash
+﻿#!/bin/bash
 
-#此脚本用来统计nginx访问日志每分钟访问的总记录数。
+#此脚本用来统计nginx访问日志某个时间段每分钟访问的总记录数。
 #使用前请先定义变量:KEY_WORDS and TIME_RANGE
 #KEY_WORDS:关键字参数
 #TIME_RANGE:时间范围参数

@@ -13,7 +13,7 @@ awk '/18\/Aug\/2021/{print $0}'lego.xxx.com-access_log | awk '{print $4}'  | cut
 
 
 # 按小时统计PV，第二种方法，原理和上面一样：sed -n 只显示匹配内容 -r是支持正则， 作用就是只显示某天的日志。
-sed -nr '\/18\/Aug\/2021/p'lego.xxx.com-access_log | awk '{print $4}'  | cut -c 14-15 | sort | uniq -c | sort -n -k2
+sed -nr '\/18\/Aug\/2021/p' lego.xxx.com-access_log | awk '{print $4}'  | cut -c 14-15 | sort | uniq -c | sort -n -k2
 
 
 

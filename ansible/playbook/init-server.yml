@@ -3,8 +3,8 @@
   remote_user: root
   gather_facts: yes
   vars:
-    userid: opuser
-    uid: 2017
+    userid: ryuser
+    uid: 2020
     repo: opgit.abc.so
     ser_name: bigops-server
   tasks:

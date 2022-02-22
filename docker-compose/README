@@ -1,4 +1,4 @@
-
+﻿
 docker-compose安装
 
 
@@ -23,6 +23,3 @@ dingtalk is up-to-date
 grafana is up-to-date
 alertmanager is up-to-date
 Recreating prometheus ... done
-
-
-

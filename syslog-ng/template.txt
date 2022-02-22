@@ -1,0 +1,28 @@
+#precision-marketing-server
+source s_local180 { file("/data/logs-app-combine/apps/precision-marketing-server/info.log" follow_freq(1) flags(no-parse)); };
+destination d_remote180 {tcp("10.110.2.2" port(50180));};
+log {source(s_local180);destination(d_remote180);};
+
+source s_local181 { file("/data/logs-app-combine/apps/precision-marketing-server/error.log" follow_freq(1) flags(no-parse)); };
+destination d_remote181 {tcp("10.110.2.2" port(50181));};
+log {source(s_local181);destination(d_remote181);};
+
+source s_local182 { file("/data/logs-app-combine/apps/precision-marketing-server/warn.log" follow_freq(1) flags(no-parse)); };
+destination d_remote182 {tcp("10.110.2.2" port(50182));};
+log {source(s_local182);destination(d_remote182);};
+
+
+#以下部分复制到repo服务器上的/etc/syslog-ng/syslog-ng.conf中
+#precision-marketing-server
+destination d_destination_prod_precision_marketing_server_info{ file("/data/logs_prod/apps/precision-marketing-server-combine/precision-marketing-server-info_${R_YEAR}${R_MONTH}${R_DAY}.log"); };
+log { source(s_remote180); destination(d_destination_prod_precision_marketing_server_info); };
+
+destination d_destination_prod_precision_marketing_server_error{ file("/data/logs_prod/apps/precision-marketing-server-combine/precision-marketing-server-error_${R_YEAR}${R_MONTH}${R_DAY}.log"); };
+log { source(s_remote181); destination(d_destination_prod_precision_marketing_server_error); };
+
+destination d_destination_prod_precision_marketing_server_warn{ file("/data/logs_prod/apps/precision-marketing-server-combine/precision-marketing-server-warn_${R_YEAR}${R_MONTH}${R_DAY}.log"); };
+log { source(s_remote182); destination(d_destination_prod_precision_marketing_server_warn); };
+
+source s_remote180 {tcp(ip(10.110.2.2) port(50180) max-connections(500));};
+source s_remote181 {tcp(ip(10.110.2.2) port(50181) max-connections(500));};
+source s_remote182 {tcp(ip(10.110.2.2) port(50182) max-connections(500));};

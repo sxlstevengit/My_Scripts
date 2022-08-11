@@ -1,9 +1,13 @@
-FROM centos7:latest
+FROM centos:centos7.9.2009
 LABEL MAINTAINER="sxl_youcun@qq.com" \
       Author="steven"
-RUN yum install -y wget vim && \
-    wget -O install.sh http://download.bt.cn/install/install_6.0.sh && \ 
-    sh install.sh
+
+ADD install.sh /
+RUN yum install -y wget vim net-tools iproute coreutils && \
+    wget -O /etc/yum.repos.d/epel.repo https://mirrors.aliyun.com/repo/epel-7.repo && \
+    bash /install.sh && \
+    yum clean all && \
+    rm -rf /var/cache/yum
 WORKDIR /
 EXPOSE 8888
 CMD ["/usr/sbin/init"]

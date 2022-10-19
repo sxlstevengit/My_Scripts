@@ -33,7 +33,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
     && addgroup -g 2022 ryuser \
     && adduser -h /home/ryuser -u 2022 -G ryuser -D ryuser \
     && cd / \
-    && rm -rf /tmp/* \
+    && rm -rf /tmp/* /var/cache/apk/* \
     && rm -f /etc/apk/keys/sgerrand.rsa.pub
 
 CMD ["sh"]

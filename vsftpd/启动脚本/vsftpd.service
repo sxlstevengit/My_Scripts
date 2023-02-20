@@ -1,0 +1,13 @@
+[Unit]
+Description=Vsftpd ftp daemon
+After=network.target
+
+[Service]
+Type=forking
+User=root
+Group=root
+WorkingDirectory=/data/ftpuser/
+ExecStart=/usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,5 @@
+#%PAM-1.0
+##auth required /usr/lib/security/pam_userdb.so db=/etc/vsftpd/login
+##account required /usr/lib/security/pam_userdb.so db=/etc/vsftpd/login
+auth required /usr/lib64/security/pam_userdb.so db=/etc/vsftpd/vsftpd_login
+account required /usr/lib64/security/pam_userdb.so db=/etc/vsftpd/vsftpd_login

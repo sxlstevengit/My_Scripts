@@ -1,0 +1,16 @@
+[Unit]
+Description=haproxy_exporter
+After=network.target
+
+[Service]
+User=ryuser
+Group=ryuser
+Type=simple
+ExecStart=/usr/local/haproxy_exporter/haproxy_exporter --haproxy.scrape-uri=http://admin:admin@localhost:33306/haproxy-status;csv
+Restart=on-failure
+KillMode=process
+RestartSec=5s
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

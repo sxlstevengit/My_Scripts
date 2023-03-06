@@ -1,0 +1,16 @@
+[Unit]
+Description=consul_exporter
+After=network.target
+
+[Service]
+User=ryuser
+Group=ryuser
+Type=simple
+ExecStart=/usr/local/consul_exporter/consul_exporter
+Restart=on-failure
+KillMode=process
+RestartSec=5s
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

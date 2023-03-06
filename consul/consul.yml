@@ -1,0 +1,39 @@
+version: '3.2'
+services:
+  consul1:
+    image: consul:1.15.0
+    container_name: consul1
+    user: root
+    restart: always
+    #network_mode: "host"
+    ports:
+      - 3004:8500
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+    #command:
+    #  - /bin/consul agent -ui -dev -server -bootstrap-expect=1 -node=consul1 -client 0.0.0.0 -data-dir=/consul/data -config-dir=/consul/config
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /etc/timezone:/etc/timezone
+      - ./consul:/consul
+  consul2:
+    image: consul:1.15.0
+    container_name: consul2
+    user: root
+    restart: always
+    ports:
+      - 3005:8500
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+    command:
+      - agent 
+      - -enable-script-checks=true
+      - -node=consul2 
+      - -client=0.0.0.0 
+      - -data-dir=/consul/data 
+      - -config-dir=/consul/config
+      - -join=
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /etc/timezone:/etc/timezone
+      - ./consul2:/consul

@@ -1,0 +1,21 @@
+[Unit]
+Description=Traefik
+Documentation=https://doc.traefik.io/traefik/
+After=network-online.target
+AssertFileIsExecutable=/usr/bin/traefik
+AssertPathExists=/root/traefik/traefik.yml
+
+[Service]
+# Run traefik as its own user (create new user with: useradd -r -s /bin/false -U -M traefik)
+User=root
+Group=root
+
+# configure service behavior
+Type=simple
+ExecStart=/usr/bin/traefik --configfile=/root/traefik/traefik.yml
+Restart=always
+KillMode=process
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

@@ -70,3 +70,13 @@ consul kv import --http-addr=http://127.0.0.1:8500 -token=xxxxxxxx @consul_kv_ba
 可以参考：https://www.jianshu.com/p/15e49efa2e24
 ```
 
+### docker-compose-ConsulManager.yml文件说明
+
+```shell
+ConsulManager的启动文件。
+
+ConsulManager是一个使用Flask+Vue开发，基于Consul的WEB运维平台，弥补了Consul官方UI对Services管理的不足；并且基于Consul的服务发现与键值存储：实现了各云厂商多种资源与Prometheus的无缝同步，以及对各类监控资源的优雅管理与展示。 就是一个管理consul的工具。 还可以生成prometheus的监控配置和报警规则，方便。
+参考链接：https://github.com/starsliao/ConsulManager
+
+```
+

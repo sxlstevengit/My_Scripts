@@ -174,6 +174,55 @@ userns_mode
 
 deploy：指定与服务的部署和运行有关的配置。注：只在 swarm 模式和 stack 部署下才会有用。且仅支持 V3.4 及更高版本。
 
+
+compose.yml 文件示例
+version: "3"        # 版本号，deploy功能是3版本及以上才有的
+services:            # 服务，每个服务对应配置相同的一个或者多个docker容器
+  redis:            # 服务名，自取
+    image: redis:alpine        # 创建该服务所基于的镜像。使用stack部署，只能基于镜像
+    ports:             # 容器内外的端口映射情况
+      - "1883:1883"
+      - "9001:9001"
+    networks:        # 替代了命令行模式的--link选项
+      - fiware
+    volumes:         # 容器内外数据传输的对应地址
+      - "/srv/mqtt/config:/mqtt/config:ro"
+      - "/srv/mqtt/log:/mqtt/log"
+      - "/srv/mqtt/data/:/mqtt/data/"
+    command: -dbhost stack_mongo # 命令行模式中跟在最后的参数，此条没有固定的格式，建议参照所部署的docker镜像的说明文档来确定是否需要该项、需要写什么
+    deploy:
+      mode: replicated
+      replicas: 6            # replicas模式， 副本数目为1
+      endpoint_mode: vip
+      labels: 
+        description: "This redis service label"
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 50M
+        reservations:
+          cpus: '0.25'
+          memory: 20M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      placement:
+        constraints:
+          - "node.role==worker"        # 部署位置，只在工作节点部署
+          - "engine.labels.operatingsystem==ubuntu 18.04"
+        preferences:
+          - spread: node.labels.zone
+      update_config:
+        parallelism: 2
+        delay: 10s
+        order: stop-first
+
+networks:         # 定义部署该项目所需要的网络
+  fiware:
+
+
 其它命令可参考下面链接：
 https://developer.aliyun.com/article/1156985
 ```

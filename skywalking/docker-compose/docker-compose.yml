@@ -1,0 +1,67 @@
+version: "3"
+
+services:
+  mysql:
+    container_name: mysql5.7.0.0
+    image: nacos/nacos-mysql:5.7
+    env_file:
+      - ./mysql.env
+   # volumes:
+   #   - ./mysql:/var/lib/mysql
+    ports:
+      - "3308:3306"
+  skywalking-oap:
+    image: apache/skywalking-oap-server:9.6.0
+    container_name: skywalking-oap
+    #下面列出了三种写法： 
+    # 第一种：是entrypoint和command一起使用, 覆盖了原镜像命令。注意：由于command中有&&符号, 需要做为一个参数传入，带引号。
+    # 第二种：只用entrypoint【同shell命令写法，此种不能接受command的作为参数传入】,覆盖了原镜像的entrypoint,如果原镜像中有CMD,则cmd也会清空。  
+    # 第三种：只用entrypoint[exec模式。接收CMD传过来的参数,且参数会放在现有参数的后面]
+    entrypoint: ["/bin/sh","-c"]
+    command: ["cp /data/ext-libs/* /skywalking/oap-libs/ && exec bash docker-entrypoint.sh"]
+    #entrypoint: /bin/sh -c "cp /data/ext-libs/* /skywalking/oap-libs/ && exec bash docker-entrypoint.sh"
+    #entrypoint: ["/bin/sh","-c","cp /data/ext-libs/* /skywalking/oap-libs/ && exec bash docker-entrypoint.sh"]
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    environment:
+      SW_HEALTH_CHECKER: default
+      SW_STORAGE: mysql
+      SW_JDBC_URL: jdbc:mysql://mysql:3306/skywalking?rewriteBatchedStatements=true&allowMultiQueries=true&useSSL=false
+      TZ: Asia/Shanghai
+      SW_DATA_SOURCE_USER: sky
+      SW_DATA_SOURCE_PASSWORD: skypwd
+      SW_DATA_SOURCE_CACHE_PREP_STMTS: "true"
+      SW_DATA_SOURCE_PREP_STMT_CACHE_SQL_SIZE: 250
+      SW_DATA_SOURCE_PREP_STMT_CACHE_SQL_LIMIT: 2048
+      SW_DATA_SOURCE_USE_SERVER_PREP_STMTS: "true"
+      SW_STORAGE_MYSQL_QUERY_MAX_SIZE: 5000
+      SW_STORAGE_MAX_SIZE_OF_BATCH_SQL: 2000
+      SW_STORAGE_ASYNC_BATCH_PERSISTENT_POOL_SIZE: 4
+      SW_TELEMETRY: prometheus
+    volumes: 
+      - ./ext-libs:/data/ext-libs
+    healthcheck:
+      test: ["CMD-SHELL", "/skywalking/bin/swctl ch"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      #start_period: 10s
+    restart: on-failure
+    ports:
+      - "11800:11800"
+      - "12800:12800"
+
+  skywalking-ui:
+    image: apache/skywalking-ui:9.6.0
+    depends_on:
+      - skywalking-oap
+    links:
+      - skywalking-oap
+    ports:
+    - "8080:8080"
+    environment:
+      SW_OAP_ADDRESS: http://skywalking-oap:12800
+      SW_HEALTH_CHECKER: default
+      TZ: Asia/Shanghai

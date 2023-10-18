@@ -1,0 +1,128 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: platform-adtask-server
+  namespace: prod
+  labels:
+    team: "platform"
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8090"
+    prometheus.io/path: "/actuator/prometheus"
+spec:
+  selector:
+    ns: prod
+    app: platform-adtask-server
+  ports:
+  - name: http
+    targetPort: 8090
+    port: 8090
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: platform-adtask-server-dm
+  namespace: prod
+  annotations:
+    commitid: "5c2a9e2"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      ns: prod
+      app: platform-adtask-server
+  template:
+    metadata:
+      labels:
+        ns: prod
+        app: platform-adtask-server
+        createdt: '20231011150031'
+        team: "platform"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8090"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      securityContext:
+        runAsUser: 2020
+        runAsGroup: 2020
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - "platform-adtask-server"
+              topologyKey: "kubernetes.io/hostname"
+      volumes:
+      - name: skywalking
+        hostPath: 
+          path: /data/apps/skywalking9
+          type: Directory
+      - name: logs
+        hostPath:
+          path: /data/logs-app-combine/apps/platform-adtask-server
+          type: DirectoryOrCreate
+      containers:
+      - name: platform-adtask-server
+        image: repo.xxx.com/platform/platform-adtask-server:20231011-134511-78637f2-Feature-adv-20230928
+        volumeMounts:
+        - name: skywalking                                                                                                                                     
+          mountPath: /data/apps/skywalking
+        - name: logs
+          mountPath: /data/servers/platform-adtask-server/logs
+        command: ["/bin/sh","-c"]
+        args:
+        - cd /data/servers/$APPNAME && exec java $JVMOPT -jar /data/servers/$APPNAME/${APPNAME}.jar --nacos.server-addr=nacos.prod.svc.cluster.local:8848 --nacos.namespace=2868e24a-e650-417b-98bc-893e42a1fa4f --server.port=8090
+        env:
+        - name: APPNAME
+          value: "platform-adtask-server"
+        - name: JVMOPT
+          #value: "-server -Xms2048m -Xmx2048m -XX:MaxNewSize=100m -Dfile.encoding=utf-8 -Dsun.jnu.encoding=utf-8 -Djava.awt.headless=true --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED"
+          value: "-server -Xms2048m -Xmx2048m -XX:MaxNewSize=100m -Dfile.encoding=utf-8 -Dsun.jnu.encoding=utf-8 -Djava.awt.headless=true --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED -javaagent:/data/apps/skywalking/skywalking-agent.jar -Dskywalking.agent.service_name=platform-adtask-server"
+        ports:
+        - name: http
+          containerPort: 8090
+        resources:
+          limits:
+            memory: 2440Mi
+            cpu: 1000m
+          requests:
+            memory: 412Mi
+            cpu: 100m
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - sh
+              - -c
+              - curl -X POST http://127.0.0.1:8090/actuator/offline
+        livenessProbe:
+          initialDelaySeconds: 10
+          failureThreshold: 1
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 10
+          httpGet:
+            port: 8090
+            path: /actuator/health/liveness
+        readinessProbe:
+          initialDelaySeconds: 10
+          failureThreshold: 3
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 15
+          httpGet:
+            port: 8090
+            path: /actuator/health/readiness
+        startupProbe:
+          initialDelaySeconds: 10
+          failureThreshold: 30
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 15
+          httpGet:
+            port: 8090
+            path: /actuator/health

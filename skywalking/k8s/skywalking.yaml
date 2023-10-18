@@ -1,0 +1,112 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: skywalking-svc
+  namespace: prod
+  labels:
+    app: skywalking-svc
+spec:
+  type: ClusterIP
+  ports:
+    - port: 11800
+      name: skywalking-collect
+      targetPort: 11800
+    - port: 12800
+      name: skywalking-ui
+      targetPort: 12800
+    - name: ui-http
+      port: 8080
+      targetPort: 8080
+  selector:
+    name: skywalking
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: skywalking
+  labels:
+    name: skywalking
+    component: ops
+    role: ops
+  namespace: prod
+spec:
+  selector:
+    matchLabels:
+      name: skywalking
+  template:
+    metadata:
+      labels:
+        name: skywalking
+    spec:
+      hostname: skywalking
+      containers:
+      - name: skywalking-oap
+        image: apache/skywalking-oap-server:6.5.0
+        imagePullPolicy: IfNotPresent
+        command: ['/bin/sh','-c']
+        args:
+        - cp /skywalking/ext-libs/* /skywalking/oap-libs/ && exec bash docker-entrypoint.sh
+        env:
+        - name: SW_STORAGE
+          value: mysql
+        - name: TZ
+          value: Asia/Shanghai
+        - name: SW_JDBC_URL
+          value: jdbc:mysql://mysql-slave00:3306/skywalking
+        - name: SW_DATA_SOURCE_USER
+          value: sky
+        - name: SW_DATA_SOURCE_PASSWORD
+          value: sky-prod
+        ports:
+        - containerPort: 
+          protocol: TCP
+          containerPort: 11800
+        - containerPort: 
+          protocol: TCP
+          containerPort: 12800
+        volumeMounts:
+        - name: libs
+          mountPath: /skywalking/ext-libs
+
+      - name: skywalking-ui
+        image: apache/skywalking-ui:6.5.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: SW_OAP_ADDRESS
+          value: "127.0.0.1:12800"
+        ports:
+        - containerPort:
+          protocol: TCP
+          containerPort: 8080
+
+      tolerations:
+      - operator: Exists
+      volumes:
+      - hostPath:
+          path: /opt/store/skywalking/ext-libs
+          type: Directory
+        name: libs
+      nodeSelector:
+        kubernetes.io/hostname: prod-slave00
+
+---
+# ------------------- App Ingress ------------------- #
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: skywalking-ingress
+  namespace: prod
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: skywalkingprod.xxx.com
+    http:
+      paths:
+      - path: "/"
+        pathType: Prefix
+        backend:
+          service:
+            name: skywalking-svc
+            port:
+              number: 8080

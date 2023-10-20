@@ -1,0 +1,19 @@
+[Unit]
+Description=Stable Diffusion AUTOMATIC1111 Web UI service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+RestartSec=30
+User=devops
+WorkingDirectory=/data/sdai/stable-diffusion-webui
+Environment="COMMANDLINE_ARGS=--api --listen --enable-insecure-extension-access --skip-torch-cuda-test --precision full --no-half --use-cpu SD GFPGAN BSRGAN ESRGAN SCUNet CodeFormer --all"
+#Environment="COMMANDLINE_ARGS=--api --api-auth admin:abce@1234 --api-log --listen --gradio-auth admin:abce@1234 --no-gradio-queue --xformers --enable-insecure-extension-access --precision full --no-half --all"
+ExecStart=/data/sdai/stable-diffusion-webui/webui.sh
+Restart=on-failure
+StandardOutput=append:/data/logs/sdwebui.log
+StandardError=append:/data/logs/sdwebui.err
+
+[Install]
+WantedBy=multi-user.target

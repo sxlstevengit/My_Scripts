@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-springboot
+  namespace: skytest
+spec:
+  selector:
+    matchLabels:
+      app: demo-springboot
+  template:
+    metadata:
+      labels:
+        swck-java-agent-injected: "true"  # enable the java agent injector
+        app: demo-springboot
+      annotations:
+        strategy.skywalking.apache.org/agent.Overlay: "true"  # enable the agent overlay
+        agent.skywalking.apache.org/agent.service_name: "backend-service"
+        agent.skywalking.apache.org/collector.backend_service: "default-oap:11800"
+    spec:
+      containers:
+      - name: springboot
+        imagePullPolicy: IfNotPresent
+        image: app:v0.0.1
+        command: ["java"]
+        args: ["-jar","/app.jar"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo
+  namespace: skytest
+spec:
+  type: ClusterIP
+  ports:
+  - name: 8085-tcp
+    port: 8085
+    protocol: TCP
+    targetPort: 8085
+  selector:
+    app: demo-springboot

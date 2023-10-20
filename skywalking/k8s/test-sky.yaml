@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: agent-as-sidecar
+  namespace: stag
+spec:
+  restartPolicy: Never
+
+  volumes:
+    - name: skywalking-agent
+      emptyDir: { }
+
+  initContainers:
+    - name: agent-container
+      image: apache/skywalking-java-agent:9.0.0-alpine
+      volumeMounts:
+        - name: skywalking-agent
+          mountPath: /agent
+      command: [ "/bin/sh" ]
+      args: [ "-c", "cp -R /skywalking/agent /agent/" ]
+
+  containers:
+    - name: app-container
+      image: springio/gs-spring-boot-docker
+      volumeMounts:
+        - name: skywalking-agent
+          mountPath: /skywalking
+      env:
+        - name: JAVA_TOOL_OPTIONS
+          value: "-javaagent:/skywalking/agent/skywalking-agent.jar -Dskywalking.agent.service_name=gs-spring-boot-docker -Dskywalking.collector.backend_service=skywalking-9-svc:11800"

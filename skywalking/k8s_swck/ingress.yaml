@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: skytest
+  namespace: skytest
+spec:
+  rules:
+  - host: skytest.XXX.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: default-ui
+            port:
+              number: 80

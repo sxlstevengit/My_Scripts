@@ -1,0 +1,71 @@
+version: "2"
+services:
+  redis-m1:
+    container_name: redis-m1
+    image: redis:5.0.14-alpine3.16 
+    command: ["/etc/redis.conf"]
+    entrypoint: ["redis-server"]
+    networks:
+      redis_net:
+        ipv4_address: 172.16.200.10
+    volumes:
+      - ./config/r_cluster_m1.conf:/etc/redis.conf
+    ports:
+      - "6379:6379"
+  redis-m2:
+    container_name: redis-m2
+    image: redis:5.0.14-alpine3.16 
+    command: ["/etc/redis.conf"]
+    entrypoint: ["redis-server"]
+    networks:
+      redis_net:
+        ipv4_address: 172.16.200.11
+    volumes:
+      - ./config/r_cluster_m2.conf:/etc/redis.conf
+  redis-m3:
+    container_name: redis-m3
+    image: redis:5.0.14-alpine3.16 
+    command: ["/etc/redis.conf"]
+    entrypoint: ["redis-server"]
+    networks:
+      redis_net:
+        ipv4_address: 172.16.200.9
+    volumes:
+      - ./config/r_cluster_m3.conf:/etc/redis.conf
+  redis-m4:
+    container_name: redis-m4
+    image: redis:5.0.14-alpine3.16 
+    command: ["/etc/redis.conf"]
+    entrypoint: ["redis-server"]
+    networks:
+      redis_net:
+        ipv4_address: 172.16.200.12
+    volumes:
+      - ./config/r_cluster_m4.conf:/etc/redis.conf
+  redis-m5:
+    container_name: redis-m5
+    image: redis:5.0.14-alpine3.16 
+    command: ["/etc/redis.conf"]
+    entrypoint: ["redis-server"]
+    networks:
+      redis_net:
+        ipv4_address: 172.16.200.13
+    volumes:
+      - ./config/r_cluster_m5.conf:/etc/redis.conf
+  redis-m6:
+    container_name: redis-m6
+    image: redis:5.0.14-alpine3.16 
+    command: ["/etc/redis.conf"]
+    entrypoint: ["redis-server"]
+    networks:
+      redis_net:
+        ipv4_address: 172.16.200.14
+    volumes:
+      - ./config/r_cluster_m6.conf:/etc/redis.conf
+networks:
+  redis_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.200.0/24
